@@ -7,6 +7,10 @@
  */
 package com.ideas2it.onlinestore.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * It represents the AuthenticationResponse.
  *
@@ -14,15 +18,9 @@ package com.ideas2it.onlinestore.dto;
  * @version - 1.0
  * @since - 2022-12-20
  */
+@Getter
+@Setter
+@AllArgsConstructor
 public class AuthenticationResponse {
-
     private final String token;
-
-    public AuthenticationResponse(String token) {
-        this.token = token;
-    }
-
-    public String getJwt() {
-        return token;
-    }
 }

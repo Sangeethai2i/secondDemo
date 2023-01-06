@@ -25,17 +25,17 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 
 	/**
 	 * <p>
-	 * This method is used to fetch stock product if it is valid 
-	 * its return list of stock object else it empty 
+	 * This method is used to fetch stock product if it is valid
+	 * its return list of stock object else it empty
 	 * </p>
-	 * 
+	 *
 	 * @param productName - name of the product
 	 * @return List<Stock> - list of stock products
 	 */
 	@Query("from Stock where productName = :productName")
 	List<Stock> findByProductName(String productName);
-	
-	/** 
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override

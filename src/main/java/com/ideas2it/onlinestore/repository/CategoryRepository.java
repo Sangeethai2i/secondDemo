@@ -19,13 +19,13 @@ import com.ideas2it.onlinestore.model.Category;
  * @author arunkumar
  */
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-	
+
 	/**
 	 * <p>
 	 * This method used to get the sub categories by using category name
 	 * If name is not valid it return null
 	 * </p>
-	 * 
+	 *
 	 * @param name      - this name can be category or sub category
 	 * @return category - details of the category object
 	 */

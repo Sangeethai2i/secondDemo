@@ -25,16 +25,16 @@ import lombok.Setter;
  * @version 1.0
  * @author arunkumar
  */
-@Entity 
+@Entity
 @Getter
 @Setter
 public class Category extends BaseModel {
-	
-    @Column(nullable = false)
-	private String name; 
+
+	@Column(nullable = false)
+	private String name;
 	@ManyToOne
 	@JoinColumn(name = "category_id")
 	private Category category;
-	@OneToMany
+	@OneToMany(mappedBy = "category")
 	private List<Category> subCategories;
 }

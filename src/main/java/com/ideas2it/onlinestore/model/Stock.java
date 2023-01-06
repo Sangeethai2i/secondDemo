@@ -29,12 +29,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Stock extends BaseModel {
- 
+
 	@Column(nullable = false)
 	private String productName;
-	@Column(nullable = false)	
+	@Column(nullable = false)
 	private int quantity;
-	@Column(nullable = false)	
+	@Column(nullable = false)
 	private Date dateOfManufacture;
 	private Date dateOfExpire;
 	@ManyToOne(cascade = CascadeType.ALL)

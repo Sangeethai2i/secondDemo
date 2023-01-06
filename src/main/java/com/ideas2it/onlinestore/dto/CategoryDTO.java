@@ -21,12 +21,12 @@ import lombok.Setter;
  *
  * @author - arunkumar
  * @version - 1.0
- * 
+ *
  */
 @Getter
 @Setter
 public class CategoryDTO {
-	
+
 	private long id;
 	private String name;
 	@JsonProperty(access = Access.WRITE_ONLY)

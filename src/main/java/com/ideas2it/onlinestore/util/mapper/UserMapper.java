@@ -10,22 +10,12 @@ package com.ideas2it.onlinestore.util.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ideas2it.onlinestore.dto.*;
+import com.ideas2it.onlinestore.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import com.ideas2it.onlinestore.dto.AddressDTO;
-import com.ideas2it.onlinestore.dto.CartDTO;
-import com.ideas2it.onlinestore.dto.CartProductDTO;
-import com.ideas2it.onlinestore.dto.RoleDTO;
-import com.ideas2it.onlinestore.dto.UserDTO;
-import com.ideas2it.onlinestore.dto.WishlistDTO;
-import com.ideas2it.onlinestore.model.Address;
-import com.ideas2it.onlinestore.model.Cart;
-import com.ideas2it.onlinestore.model.CartProduct;
-import com.ideas2it.onlinestore.model.Role;
-import com.ideas2it.onlinestore.model.User;
-import com.ideas2it.onlinestore.model.Wishlist;
 import com.ideas2it.onlinestore.service.ProductService;
 
 /**
@@ -37,18 +27,18 @@ import com.ideas2it.onlinestore.service.ProductService;
  */
 @Component
 public class UserMapper {
-    private long id = 0;
-    
-    @Autowired
-    @Lazy
-    private ProductService productService;
 
+    /**
+     * Converts the user DTO object into user DAO objects
+     *
+     * @param userDTO   details of the user.
+     * @return User     converted user details.
+     */
     public User convertUserDTOToDAO(UserDTO userDTO) {
+        System.out.println(userDTO.getFirstName());
         User user = new User();
 
-        if (id < userDTO.getId()) {
-            user.setId(userDTO.getId());
-        }
+        user.setId(userDTO.getId());
         user.setFirstName(userDTO.getFirstName());
         user.setMiddleName(userDTO.getMiddleName());
         user.setLastName(userDTO.getLastName());
@@ -58,12 +48,16 @@ public class UserMapper {
         return user;
     }
 
+    /**
+     * Converts the user DAO object into user DTO object.
+     *
+     * @param user       details of the user DAO.
+     * @return UserDTO   details of the user DTO.
+     */
     public UserDTO convertUserDAOToDTO(User user) {
         UserDTO userDTO = new UserDTO();
 
-        if (id < user.getId()) {
-            userDTO.setId(user.getId());
-        }
+        userDTO.setId(user.getId());
         userDTO.setFirstName(user.getFirstName());
         userDTO.setMiddleName(user.getMiddleName());
         userDTO.setLastName(user.getLastName());
@@ -72,12 +66,16 @@ public class UserMapper {
         return userDTO;
     }
 
+    /**
+     * Converts the address DTO object into address DAO object.
+     *
+     * @param addressDTO   details of the address DTO.
+     * @return Address     details of the address DAO.
+     */
     public Address convertAddressDTOToDAO(AddressDTO addressDTO) {
         Address address = new Address();
 
-        if (id < addressDTO.getId()) {
-            address.setId(addressDTO.getId());
-        }
+        address.setId(addressDTO.getId());
         address.setDoorNumber(addressDTO.getDoorNumber());
         address.setStreet(addressDTO.getStreet());
         address.setCity(addressDTO.getCity());
@@ -85,15 +83,20 @@ public class UserMapper {
         address.setPinCode(addressDTO.getPinCode());
         address.setType(addressDTO.getType());
         address.setLandmark(addressDTO.getLandmark());
+        address.setUser(convertUserDTOToDAO(addressDTO.getUser()));
         return address;
     }
 
+    /**
+     * Converts the address DAO object into address DTO object.
+     *
+     * @param address         details of the address DAO.
+     * @return AddressDTO     details of the address DTO.
+     */
     public AddressDTO convertAddressDAOToDTO(Address address) {
         AddressDTO addressDTO = new AddressDTO();
 
-        if (id < address.getId()) {
-            addressDTO.setId(address.getId());
-        }
+        addressDTO.setId(address.getId());
         addressDTO.setDoorNumber(address.getDoorNumber());
         addressDTO.setStreet(address.getStreet());
         addressDTO.setCity(address.getCity());
@@ -104,27 +107,75 @@ public class UserMapper {
         return addressDTO;
     }
 
+    /**
+     * Converts the role DTO object into role DAO object.
+     *
+     * @param roleDTO    details of the role DTO.
+     * @return Role      details of the role DAO.
+     */
     public Role convertRoleDTOToDAO(RoleDTO roleDTO) {
         Role role = new Role();
 
-        if (id < roleDTO.getId()) {
-            role.setId(roleDTO.getId());
-        }
+        role.setId(roleDTO.getId());
         role.setType(roleDTO.getType());
         return role;
     }
 
+    /**
+     * Converts the role DAO object into role DTO object.
+     *
+     * @param role        details of the role DAO.
+     * @return RoleDTO    details of the role DTO.
+     */
     public RoleDTO convertRoleDAOToDTO(Role role) {
         RoleDTO roleDTO = new RoleDTO();
 
-        if (id < role.getId()) {
-            roleDTO.setId(role.getId());
-        }
+        roleDTO.setId(role.getId());
         roleDTO.setType(role.getType());
         return roleDTO;
     }
 
+    /**
+     * Converts the wishlist DAO object into wishlist DTO object
+     * also converts the product DAO object into product DTO object.
+     *
+     * @param wishlist        details of the wishlist DAO.
+     * @return WishlistDTO    details of the wishlist DTO.
+     */
+    public WishlistDTO convertWishlistDAO(Wishlist wishlist) {
+        WishlistDTO wishlistDTO = new WishlistDTO();
+
+        wishlist.setId(wishlistDTO.getId());
+        wishlistDTO.setName(wishlist.getName());
+
+        if (!wishlist.getProducts().isEmpty()) {
+            List<ProductDTO> products = new ArrayList<>();
+            ProductMapper productMapper = new ProductMapper();
+
+            for (Product product: wishlist.getProducts()) {
+                products.add(productMapper.convertProductToProductDTO(product));
+            }
+            wishlistDTO.setProducts(products);
+        }
+        return wishlistDTO;
+    }
+
+    /**
+     * Converts the wishlist DTO object into wishlist DAO object.
+     *
+     * @param wishlistDTO    details of the wishlist DAO.
+     * @return Wishlist      details of the wishlist DTO.
+     */
+    public Wishlist convertWishlistDTO(WishlistDTO wishlistDTO) {
+        Wishlist wishlist = new Wishlist();
+
+        wishlist.setId(wishlistDTO.getId());
+        wishlist.setName(wishlistDTO.getName());
+        return wishlist;
+    }
+
     public User convertUserDTO(UserDTO userDTO) {
+        System.out.println(userDTO.getFirstName());
         User user = convertUserDTOToDAO(userDTO);
 
         if (!(userDTO.getAddresses().isEmpty())) {
@@ -142,8 +193,8 @@ public class UserMapper {
             }
             user.setRoles(roles);
         }
-        
-  
+
+
         return user;
     }
 
@@ -166,41 +217,5 @@ public class UserMapper {
             userDTO.setRoles(roles);
         }
         return userDTO;
-    }
-    
-    public CartDTO convertCartDAO(Cart cart) {
-    	CartDTO cartDTO = new CartDTO();
-    	List<CartProduct> cartProducts = cart.getCartProducts();
-    	List<CartProductDTO> cartProductDTOs = new ArrayList<>();
-    	cartDTO.setCartTotal(cart.getCartTotal());
-    	
-    	for (CartProduct cartProduct : cartProducts) {
-			CartProductDTO cartProductDTO = new CartProductDTO();
-			cartProductDTO.setQuantity(cartProduct.getQuantity());
-			cartProductDTO.setProduct(this.productService.getById(cartProduct.getProduct().getId()));
-			cartProductDTOs.add(cartProductDTO);
-		}    	
-    	cartDTO.setCartProducts(cartProductDTOs);
-    	return cartDTO;
-    }
-
-    public WishlistDTO convertWishlistDAO(Wishlist wishlist) {
-        WishlistDTO wishlistDTO = new WishlistDTO();
-
-        if (id < wishlist.getId()) {
-            wishlistDTO.setId(wishlist.getId());
-        }
-        wishlistDTO.setName(wishlist.getName());
-        return wishlistDTO;
-    }
-
-    public Wishlist convertWishlistDTO(WishlistDTO wishlistDTO) {
-        Wishlist wishlist = new Wishlist();
-
-        if (id < wishlistDTO.getId()) {
-            wishlist.setId(wishlistDTO.getId());
-        }
-        wishlist.setName(wishlistDTO.getName());
-        return wishlist;
     }
 }

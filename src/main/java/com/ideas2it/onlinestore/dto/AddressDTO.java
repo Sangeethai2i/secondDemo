@@ -7,11 +7,16 @@
  */
 package com.ideas2it.onlinestore.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
+
 import com.ideas2it.onlinestore.util.constants.Constant;
 
 /**
@@ -21,6 +26,8 @@ import com.ideas2it.onlinestore.util.constants.Constant;
  * @version - 1.0
  * @since - 2022-12-20
  */
+@Getter
+@Setter
 public class AddressDTO {
 
     private long id;
@@ -34,6 +41,7 @@ public class AddressDTO {
     @Pattern(regexp = Constant.REGEX_FOR_TEXT, message = Constant.REGEX_FOR_INVALID_FORMAT)
     private String city;
     @NotNull(message = "PinCode name must be mentioned")
+    @Size(min = 6, max = 6)
     private int pinCode;
     @NotBlank(message = "State name must be mentioned")
     @Pattern(regexp = Constant.REGEX_FOR_TEXT, message = Constant.REGEX_FOR_INVALID_FORMAT)
@@ -44,80 +52,6 @@ public class AddressDTO {
     @NotBlank(message = "Landmark name must be mentioned")
     @Pattern(regexp = Constant.REGEX_FOR_TEXT, message = Constant.REGEX_FOR_INVALID_FORMAT)
     private String landmark;
-
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private UserDTO user;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public String getLandmark() {
-        return landmark;
-    }
-
-    public void setLandmark(String landmark) {
-        this.landmark = landmark;
-    }
-
-    public UserDTO getUser() {
-        return user;
-    }
-
-    public void setUser(UserDTO user) {
-        this.user = user;
-    }
-
-    public String getDoorNumber() {
-        return doorNumber;
-    }
-
-    public void setDoorNumber(String doorNumber) {
-        this.doorNumber = doorNumber;
-    }
-
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public int getPinCode() {
-        return pinCode;
-    }
-
-    public void setPinCode(int pinCode) {
-        this.pinCode = pinCode;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 }

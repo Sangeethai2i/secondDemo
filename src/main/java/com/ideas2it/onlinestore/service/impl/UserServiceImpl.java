@@ -9,9 +9,15 @@ package com.ideas2it.onlinestore.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.ideas2it.onlinestore.service.CartService;
+import com.ideas2it.onlinestore.util.configuration.JwtFilter;
+import com.ideas2it.onlinestore.util.customException.DataNotFoundException;
+import com.ideas2it.onlinestore.util.customException.RedundantDataException;
+import com.ideas2it.onlinestore.util.customException.ResourcePersistenceException;
+import com.ideas2it.onlinestore.util.mapper.UserMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,15 +32,14 @@ import com.ideas2it.onlinestore.model.Role;
 import com.ideas2it.onlinestore.model.User;
 import com.ideas2it.onlinestore.repository.UserRepository;
 import com.ideas2it.onlinestore.service.AddressService;
-import com.ideas2it.onlinestore.service.CartService;
 import com.ideas2it.onlinestore.service.UserService;
 import com.ideas2it.onlinestore.service.WishlistService;
-import com.ideas2it.onlinestore.util.configuration.JwtFilter;
 import com.ideas2it.onlinestore.util.constants.Constant;
-import com.ideas2it.onlinestore.util.customException.OnlineStoreException;
+
+import javax.xml.crypto.Data;
 
 /**
- * Service Implementation of User.
+ * Service Implementation class for User.
  *
  * @author - Gokul V
  * @version - 1.0
@@ -46,8 +51,8 @@ public class UserServiceImpl implements UserService {
     private WishlistService wishlistService;
     private AddressService addressService;
     private CartService cartService;
-    Logger logger = LogManager.getLogger(UserServiceImpl.class);
-    private final ModelMapper modelMapper = new ModelMapper();
+    private Logger logger = LogManager.getLogger(UserServiceImpl.class);
+    private UserMapper userMapper = new UserMapper();
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, WishlistService wishlistService, AddressService addressService, CartService cartService) {
@@ -61,13 +66,14 @@ public class UserServiceImpl implements UserService {
      * {@inheritDoc}
      */
     @Override
-    public UserDTO createUser(UserDTO userDTO) throws OnlineStoreException{
+    public UserDTO createUser(UserDTO userDTO) {
         if (isEmailIdExists(userDTO.getEmail()) || isMobileNumberExists(userDTO.getMobileNumber())) {
-            throw new OnlineStoreException(Constant.EMAIL_ID_PHONE_NUMBER_EXISTS, HttpStatus.NOT_ACCEPTABLE);
+            throw new RedundantDataException(Constant.EMAIL_ID_PHONE_NUMBER_EXISTS, HttpStatus.NOT_ACCEPTABLE);
         }
         userDTO.setPassword(new BCryptPasswordEncoder().encode(userDTO.getPassword()));
-        User createdUser = userRepository.save(modelMapper.map(userDTO, User.class));
-        UserDTO user = modelMapper.map(createdUser, UserDTO.class);
+        System.out.println(userDTO.getFirstName());
+        User createdUser = userRepository.save(userMapper.convertUserDTO(userDTO));
+        UserDTO user = userMapper.convertUserDAO(createdUser);
 
         if (0 < createdUser.getId()) {
             for (Role role: createdUser.getRoles()) {
@@ -84,8 +90,7 @@ public class UserServiceImpl implements UserService {
                 }
             }
         } else {
-            logger.error(Constant.PROFILE_NOT_CREATED);
-            throw new OnlineStoreException(Constant.PROFILE_NOT_CREATED, HttpStatus.NOT_ACCEPTABLE);
+            throw new ResourcePersistenceException(Constant.PROFILE_NOT_CREATED, HttpStatus.NOT_ACCEPTABLE);
         }
         return user;
     }
@@ -94,15 +99,13 @@ public class UserServiceImpl implements UserService {
      * {@inheritDoc}
      */
     @Override
-    public UserDTO getUserById(long id) throws OnlineStoreException {
+    public UserDTO getUserById(long id) {
         User user = userRepository.findById(id).orElse(null);
 
         if (null == user || user.isDeleted()) {
-            logger.error(Constant.USER_NOT_FOUND);
-            throw new OnlineStoreException(Constant.USER_NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new DataNotFoundException(Constant.USER_NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
-        userDTO.setPassword(null);
+        UserDTO userDTO = userMapper.convertUserDAO(user);
         logger.info(Constant.DETAILS_FETCHED_SUCCESSFULLY);
         return userDTO;
     }
@@ -111,7 +114,7 @@ public class UserServiceImpl implements UserService {
      * {@inheritDoc}
      */
     @Override
-    public UserDTO updateUser(UserDTO user) throws OnlineStoreException {
+    public UserDTO updateUser(UserDTO user) {
         User existingUser = JwtFilter.getThreadLocal().get();
 
         if (null != existingUser) {
@@ -119,28 +122,23 @@ public class UserServiceImpl implements UserService {
             validByEmailId(user);
             validByPhoneNumber(user);
             user.setPassword(new BCryptPasswordEncoder().encode(existingUser.getPassword()));
-            User userDAO = modelMapper.map(user, User.class);
+            User userDAO = userMapper.convertUserDTOToDAO(user);
             userDAO.setRoles(existingUser.getRoles());
             userDAO.setAddresses(existingUser.getAddresses());
-            UserDTO userDTO = modelMapper.map(userRepository.save(userDAO), UserDTO.class);
+            userDAO = userRepository.save(userDAO);
+            UserDTO userDTO = userMapper.convertUserDAO(userDAO);
             logger.info(Constant.UPDATED_SUCCESSFULLY);
             return userDTO;
         }
-        logger.error(Constant.USER_NOT_FOUND);
-        throw new OnlineStoreException(Constant.USER_NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new DataNotFoundException(Constant.USER_NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String deleteUser() throws OnlineStoreException{
+    public String deleteUser() {
         User user = JwtFilter.getThreadLocal().get();
-
-        if (null == user) {
-            logger.error(Constant.USER_NOT_FOUND);
-            throw new OnlineStoreException(Constant.USER_NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
         user.setDeleted(true);
         userRepository.save(user);
         logger.info(Constant.DELETED_SUCCESSFULLY);
@@ -151,21 +149,19 @@ public class UserServiceImpl implements UserService {
      * {@inheritDoc}
      */
     @Override
-    public List<UserDTO> getAllUser() throws OnlineStoreException {
+    public List<UserDTO> getAllUser() {
         List<User> users = userRepository.findAll();
+        List<UserDTO> usersDTO = new ArrayList<>();
 
         if (!users.isEmpty()) {
-            List<UserDTO> usersDTO = new ArrayList<>();
 
             for (User existingUser: users) {
-                UserDTO user = modelMapper.map(existingUser, UserDTO.class);
+                UserDTO user = userMapper.convertUserDAOToDTO(existingUser);
                 usersDTO.add(user);
             }
             logger.info(Constant.DETAILS_FETCHED_SUCCESSFULLY);
-            return usersDTO;
         }
-        logger.error(Constant.USER_NOT_EXISTS);
-        throw new OnlineStoreException(Constant.USER_NOT_EXISTS, HttpStatus.INTERNAL_SERVER_ERROR);
+        return usersDTO;
     }
 
     /**
@@ -208,32 +204,32 @@ public class UserServiceImpl implements UserService {
      * Validate email id before update the user
      *
      * @param user                    details of the user.
-     * @throws OnlineStoreException   occur when email id already exit
+     * @throws RedundantDataException   occur when email id already exit
      */
-    private void validByEmailId(UserDTO user) throws OnlineStoreException {
-            User existingUser = userRepository.findByEmail(user.getEmail());
+    private void validByEmailId(UserDTO user) {
+        User existingUser = userRepository.findByEmail(user.getEmail());
 
-            if (null != existingUser) {
-                if (!(existingUser.getId() == (user.getId()))) {
-                    logger.error(Constant.EMAIL_ID_EXISTS);
-                    throw new OnlineStoreException(Constant.EMAIL_ID_EXISTS, HttpStatus.NOT_ACCEPTABLE);
-                }
+        if (null != existingUser) {
+            if (!(existingUser.getId() == (user.getId()))) {
+                logger.error(Constant.EMAIL_ID_EXISTS);
+                throw new RedundantDataException(Constant.EMAIL_ID_EXISTS, HttpStatus.NOT_ACCEPTABLE);
             }
+        }
     }
 
     /**
      * Validate phone number before update the user
      *
      * @param user                    details of the user.
-     * @throws OnlineStoreException   occur when email id already exit
+     * @throws RedundantDataException   occur when email id already exit
      */
-    private void validByPhoneNumber(UserDTO user) throws OnlineStoreException {
+    private void validByPhoneNumber(UserDTO user) {
         User existingUser = userRepository.findByMobileNumber(user.getMobileNumber());
 
         if (null != existingUser) {
             if (!(user.getId() == (existingUser.getId())) ) {
                 logger.error(Constant.MOBILE_NUMBER_EXISTS);
-                throw new OnlineStoreException(Constant.MOBILE_NUMBER_EXISTS, HttpStatus.NOT_ACCEPTABLE);
+                throw new RedundantDataException(Constant.MOBILE_NUMBER_EXISTS, HttpStatus.NOT_ACCEPTABLE);
             }
         }
     }
@@ -242,12 +238,12 @@ public class UserServiceImpl implements UserService {
      * {@inheritDoc}
      */
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
         User user = userRepository.findByEmail(username);
 
         if (null == user) {
             logger.error(Constant.USER_NOT_FOUND);
-            throw new OnlineStoreException(Constant.USER_NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new DataNotFoundException(Constant.USER_NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return user;
     }

@@ -3,14 +3,13 @@ package com.ideas2it.onlinestore.util.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ideas2it.onlinestore.model.CartProduct;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ideas2it.onlinestore.dto.CartProductDTO;
-import com.ideas2it.onlinestore.model.CartProduct;
 
 public class CartProductMapper {
-	
-	@Autowired
+
 	private ProductMapper productMapper;
 	
 	public CartProductDTO convertCartProductEntityToDTO(CartProduct cartProduct) {

@@ -8,11 +8,9 @@
 package com.ideas2it.onlinestore.service;
 
 import java.util.List;
-
-import com.ideas2it.onlinestore.dto.AddressDTO;
-import com.ideas2it.onlinestore.dto.UserDTO;
-import com.ideas2it.onlinestore.util.customException.OnlineStoreException;
 import org.springframework.security.core.userdetails.UserDetailsService;
+
+import com.ideas2it.onlinestore.dto.UserDTO;
 
 /**
  * Interface for UserService
@@ -24,51 +22,52 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public interface UserService extends UserDetailsService {
 
     /**
-     * User is created once the given email id and mobileNumber is checked.
-     * if the given email id and mobileNumber is already exists throws OnlineStoreException
-     * otherwise returns user object.
+     * User is created given details and email id and mobileNumber is validated
+     * whether the given mail and mobileNumber is already exists or not.
+     * if the given email id and mobileNumber is already exists throws
+     * RedundantDataException otherwise returns user object.
      *
      * @param user                     details of the user.
      * @return String                  status message.
-     * @throws OnlineStoreException    occur when given details are not valid.
      */
-    UserDTO createUser(UserDTO user) throws OnlineStoreException;
+    UserDTO createUser(UserDTO user);
 
     /**
-     * Get the user using given user id.
-     * if the given user id is not valid throws OnlineStoreException otherwise
-     * returns user object.
+     * Get the user details using the given user id.
+     * if the given user id is not exists throws OnlineStoreException
+     * otherwise returns user details object.
      *
      * @param id                        id of the user.
-     * @return UserDTO                     details of the user.
-     * @throws OnlineStoreException     occur when given id is not exists.
+     * @return UserDTO                  details of the user.
      */
-    UserDTO getUserById(long id) throws OnlineStoreException;
+    UserDTO getUserById(long id);
 
     /**
      * Update the user details using given details.
-     * if the given email id and mobileNumber is already exists then match with existing user
-     * and given user to find the two user is same. if same update the details otherwise throws
-     * OnlineStoreException.
+     * if the given email id and mobileNumber is already exists then
+     * match with existing user and given user to find the two user is same
+     * if same update the user details and returns user details object
+     * otherwise throws OnlineStoreException.
      *
-     * @param user      details of the user.
+     * @param user                     details of the user.
+     * @return UserDTO                 updated details of the user.
      */
-    UserDTO updateUser(UserDTO user) throws OnlineStoreException;
+    UserDTO updateUser(UserDTO user);
 
     /**
      * Delete the user using given user id.
-     * if the given user id is not exist throws OnlineStoreException otherwise delete the user.
+     * if the given user id is not exist throws OnlineStoreException
+     * otherwise delete the user.
      *
-     * @throws OnlineStoreException    occur when given user is not exists.
+     * @return String                  status message.
      */
-    String deleteUser() throws OnlineStoreException;
+    String deleteUser();
 
     /**
      * Get all registered user details.
      * if the users are not exists throws OnlineStoreException otherwise returns user details.
      *
      * @return List<User>              details of the registered user.
-     * @throws OnlineStoreException    occur when users are not exists.
      */
-    List<UserDTO> getAllUser() throws OnlineStoreException;
+    List<UserDTO> getAllUser() ;
 }

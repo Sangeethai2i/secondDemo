@@ -10,17 +10,16 @@ package com.ideas2it.onlinestore.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.NotNull;
-
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,28 +32,24 @@ import org.springframework.security.core.userdetails.UserDetails;
  * @since - 2022-12-17
  */
 @Entity
-@Where(clause = "deleted = '0'")
+@Getter
+@Setter
 public class User extends BaseModel implements UserDetails {
-
-    @NotNull
+    @Column(nullable = false)
     private String firstName;
-    @NotNull
     private String middleName;
-    @NotNull
+    @Column(nullable = false)
     private String lastName;
-    @NotNull
+    @Column(nullable = false, unique = true)
     private String email;
-    @NotNull
+    @Column(nullable = false, unique = true)
     private String password;
-    @NotNull
+    @Column(nullable = false, unique = true)
     private String mobileNumber;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(cascade=CascadeType.ALL)
+    @JoinColumn(name="user_id", nullable=false)
     private List<Role> roles;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "user" ,cascade = CascadeType.ALL)
     private List<Address> addresses;
     @OneToMany(mappedBy = "user")
     @LazyCollection(LazyCollectionOption.FALSE)
@@ -63,16 +58,6 @@ public class User extends BaseModel implements UserDetails {
     private Cart cart;
     @OneToOne(mappedBy ="user")
     private Wishlist wishlist;
-    @OneToMany(mappedBy = "seller")
-    private List<Stock> stocks;
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -112,82 +97,4 @@ public class User extends BaseModel implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public List<Address> getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(List<Address> addresses) {
-        this.addresses = addresses;
-    }
-
-    
-    public List<Order> getOrders() {
-		return orders;
-	}
-
-	public void setOrders(List<Order> orders) {
-		this.orders = orders;
-	}
-
-	public Cart getCart() {
-        return cart;
-    }
-
-    public Wishlist getWishlist() {
-        return wishlist;
-    }
-
-    public List<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
-
-    public void setWishlist(Wishlist wishlist) {
-        this.wishlist = wishlist;
-    }
-
-    public void setCart(Cart cart) {
-        this.cart = cart;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getMobileNumber() {
-        return mobileNumber;
-    }
-
-    public void setMobileNumber(String mobileNumber) {
-        this.mobileNumber = mobileNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
 }

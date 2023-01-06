@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.ideas2it.onlinestore.util.customException.OnlineStoreException;
+import com.ideas2it.onlinestore.util.mapper.BrandMapper;
+import com.ideas2it.onlinestore.util.mapper.ProductMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +30,6 @@ import com.ideas2it.onlinestore.service.CategoryService;
 import com.ideas2it.onlinestore.service.ProductService;
 import com.ideas2it.onlinestore.service.StockService;
 import com.ideas2it.onlinestore.util.constants.Constant;
-import com.ideas2it.onlinestore.util.customException.OnlineStoreException;
-import com.ideas2it.onlinestore.util.mapper.BrandMapper;
-import com.ideas2it.onlinestore.util.mapper.ProductMapper;
 
 /**
  * Provides various methods to get, insert, update and delete product
@@ -65,7 +65,7 @@ public class ProductServiceImpl implements ProductService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ProductDTO addProduct(ProductDTO product) throws OnlineStoreException {
+	public ProductDTO addProduct(ProductDTO product) {
 		int quantity = product.getQuantity();
 		Date dateOfManufacture = product.getDateOfManufacture();
 		Date dateOfExpire = product.getDateOfExpiry();
