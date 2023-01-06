@@ -6,7 +6,6 @@
  * Ideas2it and its licensors, if any.
  */
 package com.ideas2it.onlinestore.util.constants;
-
 /**
  * 
  * @author Aabid
@@ -18,5 +17,6 @@ public enum OrderStatus {
 	SUCCESSFUL,
 	CANCELLED,
 	SHIPPED,
+	DELIVERED,
 	PENDING;
 }

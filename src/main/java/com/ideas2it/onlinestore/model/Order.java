@@ -23,12 +23,17 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.hibernate.annotations.ResultCheckStyle;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import com.ideas2it.onlinestore.util.constants.OrderStatus;
+
+import lombok.Getter;
+import lombok.Setter;
 /**
+ * This class represents the model we are implementing 
+ * for the Order. In addition to its own fields it also 
+ * extends a base class that contains fields which are 
+ * common across all models. 
  * 
  * @author Aabid
  * @version 1.0
@@ -36,7 +41,8 @@ import com.ideas2it.onlinestore.util.constants.OrderStatus;
  *
  */
 @Entity
-@SQLDelete(sql = "Update `order` SET deleted = '1' where order_id=?", check = ResultCheckStyle.COUNT)
+@Getter
+@Setter
 @Where(clause = "deleted = '0'")
 @Table(name = "`order`")
 public class Order extends BaseModel{
@@ -63,58 +69,5 @@ public class Order extends BaseModel{
 	@JoinColumn(name = "address_id", referencedColumnName = "id", nullable = false)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Address address;
-
-	
-	public Order() {
-		super();
-	}
-
-	public LocalDate getDate() {
-		return date;
-	}
-
-	public void setDate(LocalDate date) {
-		this.date = date;
-	}
-
-	public double getAmount() {
-		return amount;
-	}
-
-	public void setAmount(double amount) {
-		this.amount = amount;
-	}
-
-	public OrderStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(OrderStatus status) {
-		this.status = status;
-	}
-
-	public List<OrderProduct> getOrderProducts() {
-		return orderProducts;
-	}
-
-	public void setOrderProducts(List<OrderProduct> orderProducts) {
-		this.orderProducts = orderProducts;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public Address getAddress() {
-		return address;
-	}
-
-	public void setAddress(Address address) {
-		this.address = address;
-	}	
 	
 }

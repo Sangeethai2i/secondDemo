@@ -8,6 +8,7 @@
 package com.ideas2it.onlinestore.service.impl;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,20 +31,23 @@ import com.ideas2it.onlinestore.repository.OrderRepository;
 import com.ideas2it.onlinestore.service.AddressService;
 import com.ideas2it.onlinestore.service.CartProductService;
 import com.ideas2it.onlinestore.service.OrderService;
-import com.ideas2it.onlinestore.util.OrderUtil;
+import com.ideas2it.onlinestore.service.StockService;
 import com.ideas2it.onlinestore.util.configuration.JwtFilter;
 import com.ideas2it.onlinestore.util.constants.Constant;
 import com.ideas2it.onlinestore.util.constants.OrderStatus;
 import com.ideas2it.onlinestore.util.customException.DataNotFoundException;
-import com.ideas2it.onlinestore.util.customException.OnlineStoreException;
 
 /**
  * 
- * @author admin
+ * @author Aabid
+ * @version 1.0
+ * @since 16-12-2022
  *
  */
 @Service
 public class OrderServiceImpl implements OrderService{
+	
+	private final StockService stockService;
 	
 	private final AddressService addressService;
 	
@@ -51,21 +55,19 @@ public class OrderServiceImpl implements OrderService{
 	
 	private final CartProductService cartProductService;
 	
-	private final OrderUtil orderUtil;
-	
 	private final ModelMapper mapper = new ModelMapper();
 	
     private Logger logger = LogManager.getLogger(OrderServiceImpl.class);
 	
 	@Autowired
 	public OrderServiceImpl(OrderRepository orderRepository,
-			AddressService addressService, CartProductService
-			cartProductService, OrderUtil orderUtil) {
+			StockService stockService,AddressService addressService, 
+			CartProductService cartProductService) {
 		
 		this.orderRepository = orderRepository;
+		this.stockService = stockService;
 		this.addressService = addressService;
 		this.cartProductService = cartProductService;
-		this.orderUtil = orderUtil;
 	}
 	
 	/**
@@ -91,11 +93,11 @@ public class OrderServiceImpl implements OrderService{
 				return orderDTO;
 			} else {
 				logger.error(Constant.EMPTY_CART);
-				throw new OnlineStoreException(Constant.EMPTY_CART, HttpStatus.NO_CONTENT);
+				throw new DataNotFoundException(Constant.EMPTY_CART, HttpStatus.NO_CONTENT);
 			}
 		} else {
 			logger.error(Constant.ADDRESS_NOT_ADDED);
-			throw new OnlineStoreException(Constant.ADDRESS_NOT_FOUND, HttpStatus.NO_CONTENT);
+			throw new DataNotFoundException(Constant.ADDRESS_NOT_FOUND, HttpStatus.NO_CONTENT);
 		}
 			
 	}
@@ -106,7 +108,7 @@ public class OrderServiceImpl implements OrderService{
 	@Override
 	public OrderDTO getOrderById(long orderId) {
 		Order order = this.orderRepository.findById(orderId)
-				.orElseThrow(()-> new OnlineStoreException("Order not found. ID: " +orderId, HttpStatus.NO_CONTENT));
+				.orElseThrow(()-> new DataNotFoundException("Order not found. ID: " +orderId, HttpStatus.NOT_FOUND));
 		logger.error(Constant.ORDER_FETCHED);
 		return mapper.map(order, OrderDTO.class);
 	}
@@ -132,20 +134,33 @@ public class OrderServiceImpl implements OrderService{
 	public boolean updateOrder(long orderId) {
 		boolean orderCancellation = false;
 		Order order = this.orderRepository.findById(orderId)
-				.orElseThrow(()-> new OnlineStoreException(Constant.ORDER_NOT_FOUND +orderId, HttpStatus.NO_CONTENT));
+				.orElseThrow(()-> new DataNotFoundException(Constant.ORDER_NOT_FOUND +orderId, HttpStatus.NOT_FOUND));
 		
 		if (null != order) {
-			List<OrderProduct> orderProducts = order.getOrderProducts();
-			for (OrderProduct orderProduct : orderProducts) {
-				orderProduct.setDeleted(true);
+			String orderStatus = order.getStatus().toString();
+			
+			if (orderStatus == "CANCELLED") {
+				logger.info(Constant.ORDER_ALREADY_CANCELLED);
+				throw new DataNotFoundException(Constant.ORDER_ALREADY_CANCELLED+orderId, HttpStatus.NOT_FOUND);
+
+			} else if (orderStatus == "DELIVERED") {
+				logger.info(Constant.ORDER_NOT_FOUND);
+				throw new DataNotFoundException(Constant.ORDER_ALREADY_DELIVERED+orderId, HttpStatus.NOT_FOUND);
+
+			} else {
+				List<OrderProduct> orderProducts = order.getOrderProducts();
+
+				for (OrderProduct orderProduct : orderProducts) {
+					orderProduct.setDeleted(true);
+				}
+				order.setOrderProducts(orderProducts);
+				order.setStatus(OrderStatus.CANCELLED);
+				this.orderRepository.save(order);
+				increaseStocks(orderProducts);
+				orderCancellation = true;
+				logger.info(Constant.ORDER_UPDATED);
+				return orderCancellation;
 			}
-			order.setOrderProducts(orderProducts);
-			order.setStatus(OrderStatus.CANCELLED);
-			this.orderRepository.save(order);
-			orderUtil.increaseStocks(orderProducts);
-			orderCancellation = true;
-			logger.info(Constant.ORDER_UPDATED);
-			return orderCancellation;
 		} else {
 			logger.error(Constant.ORDER_NOT_FOUND);
 			throw new DataNotFoundException(Constant.ORDER_NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -164,11 +179,11 @@ public class OrderServiceImpl implements OrderService{
 		order.setUser(user);
 		order.setAddress(mapper.map(addressDTO, Address.class));
 		order.setAmount(updateCartTotal(cartProducts));
-		order.setOrderProducts(orderUtil.getOrderProductList(cartProducts));
+		order.setOrderProducts(convertCartProductsToOrderProducts(cartProducts));
 		order.setDate(LocalDate.now());
 		order.setStatus(OrderStatus.SUCCESSFUL);
 		this.orderRepository.save(order);
-		orderUtil.decreaseStocks(orderUtil.getOrderProductList(cartProducts));
+		decreaseStocks(convertCartProductsToOrderProducts(cartProducts));
 		return order;
 	}
 	
@@ -190,5 +205,84 @@ public class OrderServiceImpl implements OrderService{
 		}
 		logger.info(Constant.CART_TOTAL_UPDATED);
 		return total;
+	}
+	
+	/**
+	 * 
+	 * @param cartProducts
+	 * @return
+	 */
+	public List<OrderProduct> convertCartProductsToOrderProducts(List<CartProduct> cartProducts) {
+		List<OrderProduct> orderedProducts = new ArrayList<>();
+		
+		for (CartProduct cartProduct : cartProducts) {
+			OrderProduct orderedProduct = new OrderProduct();
+			orderedProduct.setQuantity(cartProduct.getQuantity());
+			orderedProduct.setProduct(cartProduct.getProduct());
+			orderedProducts.add(orderedProduct);
+		}
+		
+		return orderedProducts;
+	}
+	
+	/**
+	 * 
+	 * @param orderedProducts
+	 */
+	public void decreaseStocks(List<OrderProduct> orderedProducts) {
+		
+		for (OrderProduct orderProduct : orderedProducts) {
+			String productName = orderProduct.getProduct().getName();
+			int quantity = orderProduct.getQuantity();
+			this.stockService.decreaseQuantity(productName, quantity);
+		}
+		
+	}
+	
+	/**
+	 * 
+	 * @param orderedProducts
+	 */
+	public void increaseStocks(List<OrderProduct> orderedProducts) {
+		
+		for (OrderProduct orderProduct : orderedProducts) {
+			String productName = orderProduct.getProduct().getName();
+			int quantity = orderProduct.getQuantity();
+			this.stockService.increaseQuantity(productName, quantity);
+		}
+		
+	}
+	
+	
+	/**
+	 * This method takes a list of orders and converts the list 
+	 * into an OrderDTO type list that can be returned to the 
+	 * respective controller.
+	 * 
+	 * @param orders(List of orders)
+	 * @return orderDTO(List of orderDTOs)
+	 */
+	public List<OrderDTO> convertOrdersToOrderDTOs(List<Order> orders) {
+		List<OrderDTO> orderDTOList = new ArrayList<>();
+		
+		for (Order order : orders) {
+			OrderDTO orderDTO = convertOrderEntityToOrderDTO(order);
+			orderDTOList.add(orderDTO);
+		}
+		return orderDTOList;
+	}
+	
+	/**
+	 * 
+	 * @param order
+	 * @return
+	 */
+	public OrderDTO convertOrderEntityToOrderDTO(Order order) {
+		OrderDTO orderDTO = new OrderDTO();
+		orderDTO.setId(order.getId());
+		orderDTO.setDate(order.getDate());
+		orderDTO.setAmount(order.getAmount());
+		orderDTO.setAddress(mapper.map(order.getAddress(), AddressDTO.class));
+		return orderDTO;
 	}
 }

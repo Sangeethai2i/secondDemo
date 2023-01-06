@@ -18,11 +18,16 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.hibernate.annotations.ResultCheckStyle;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
+ * This class represents the model we are implementing 
+ * for the Cart. In addition to its own fields it also 
+ * extends a base class that contains fields which are 
+ * common across all models. 
  * 
  * @author Aabid
  * @version 1.0
@@ -30,7 +35,8 @@ import org.hibernate.annotations.Where;
  *
  */
 @Entity
-@SQLDelete(sql = "Update cart SET deleted = '1' where cart_id=?", check = ResultCheckStyle.COUNT)
+@Getter
+@Setter
 @Where(clause = "deleted = '0'")
 public class Cart extends BaseModel {
 	
@@ -42,33 +48,8 @@ public class Cart extends BaseModel {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<CartProduct> cartProducts;
 	
-	@OneToOne()
+	@OneToOne
 	@JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
 	private User user;
-
-	public double getCartTotal() {
-		return cartTotal;
-	}
-
-	public void setCartTotal(double cartTotal) {
-		this.cartTotal = cartTotal;
-	}
-
-	public List<CartProduct> getCartProducts() {
-		return cartProducts;
-	}
-
-	public void setCartProducts(List<CartProduct> cartProducts) {
-		this.cartProducts = cartProducts;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-	
 	
 }

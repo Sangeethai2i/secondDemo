@@ -25,7 +25,9 @@ public class Constant {
     public static final String ORDER_UPDATED = "Cart is updated successfully";
     public static final String ORDER_FETCHED = "order fetched successfully";  
     public static final String ORDERS_FETCHED = "orders fetched successfully"; 
-    public static final String ORDER_NOT_FOUND = "Order not found for the entered ID";  
+    public static final String ORDER_NOT_FOUND = "Order not found for the entered ID ";  
+    public static final String ORDER_ALREADY_CANCELLED = "The order you are trying to cancel has already been cancelled. ID: ";
+    public static final String ORDER_ALREADY_DELIVERED = "The order you are trying to cancel has already been delivered. ID: "; 
     public static final String ADD_TO_CART = "Product has been added to cart successfully";
     public static final String REMOVE_FROM_CART = "Product has been removed from the cart";
     public static final String PRODUCT_ALREADY_EXISTS = "Profile is Already Exists";
@@ -53,9 +55,9 @@ public class Constant {
     public static final String REGEX_FOR_EMAIL_ID = "^[a-z]{1}[a-z0-9._]+@[a-z0-9]+[.][a-z]*$";
     public static final String REGEX_FOR_INVALID_FORMAT = "Invalid Format";
     public static final String ADDRESS_NOT_FOUND = "Address not found";
-    public static final String ERROR_MESSAGE_EMPTY_LIST = "your list is empty";
+    public static final String EMPTY_LIST = "your list is empty";
     public static final String CATEGORY_ALREDY_EXIST = "your adding category or sub category alredy exist";
-    public static final String STOCK_NOT_FOUND = "stock not found for given request input";
+    public static final String NOT_FOUND = "Data not found for given request";
     public static final String PRODUCT_CREATION_FAILED = "Product creation failed";
     public static final String PRODUCT_UPDATION_SUCCESS = "Product updated successfully";
     public static final String PRODUCT_UPDATION_FAILED = "Product updation failed";
@@ -99,8 +101,6 @@ public class Constant {
     public static final String ORDER_CANCELLED = "Your order has been cancelled successfully";
     public static final String ORDER_CANCELATION_FAILURE = "There was an error while cancelling this order";
     public static final String CATEGORY_NOT_EXISTS = "Your searching category is not there";
-    public static final String CATEGORY_NOT_CREATED = "your category or subcategory not created";
-    public static final String CATEGORY_ALREADY_EXIST = "The category you are trying to add already exists";
     public static final String[] AUTH_WHITELIST = {
             // -- Swagger UI v2
             "/v2/api-docs",
@@ -117,7 +117,7 @@ public class Constant {
     };
     public static final String API_V1_USER = "/api/v1/user";
     public static final String API_V1_USERS = "/api/v1/user/users";
-    public static final String API_V1_USER_LOGIN = "/user/login";
+    public static final String API_V1_USER_LOGIN = "/users/login";
     public static final String API_V1_ADDRESS = "/api/v1/address";
     public static final String API_V1_WISHLIST = "/api/v1/wishlist";
     public static final String API_V1_WISHLIST_ADD = "/api/v1/wishlist/add";
@@ -125,13 +125,13 @@ public class Constant {
     public static final String API_V1_PRODUCT = "/api/v1/product";
     public static final String API_V1_PRODUCT_STOCK = "/api/v1/product/stock";
     public static final String API_V1_PRODUCT_STOCK_ALL = "/api/v1/product/stock/all";
-    public static final String CATEGORY = "/category";
-    public static final String CATEGORY_NAME = "/category/{name}";
+    public static final String API_V1_CATEGORY = "/api/v1/category";
     public static final String API_V1_ORDER = "/api/v1/order";
     public static final String API_V1_ORDER_ID = "/api/v1/order/{orderId}";
     public static final String CUSTOMER = "CUSTOMER";
     public static final String SELLER = "SELLER";
     public static final String ADMIN = "ADMIN";
+    public static final String CATEGORY_ALREADY_EXIST = "The category you are trying to add already exists";
     public static final String API_V1_PRODUCT_ALL = "/api/v1/product/all";
     public static final String API_V1_PRODUCT_BRAND = "/api/v1/product/brand";
     public static final String API_V1_PRODUCT_BRAND_ALL = "/api/v1/product/brand/all";
@@ -139,6 +139,7 @@ public class Constant {
     public static final String API_V1_PRODUCT_CATEGORY = "/api/v1/product/category";
     public static final String API_V1_PRODUCT_SUBCATEGORY = "/api/v1/product/subcategory";
     public static final String API_V1_PRODUCT_STOCK_SELLER = "/api/v1/product/stock/seller";
+    public static final String API_V1_CATEGORY_ALL = "/api/v1/category/all";
     
     
     public static final String ADD_PRODUCT = "Add Product to Cart";

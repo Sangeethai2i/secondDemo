@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import com.ideas2it.onlinestore.dto.CartDTO;
 import com.ideas2it.onlinestore.dto.CartProductDTO;
+import com.ideas2it.onlinestore.dto.CartProductInputDTO;
 import com.ideas2it.onlinestore.model.Cart;
 import com.ideas2it.onlinestore.model.CartProduct;
 import com.ideas2it.onlinestore.model.Product;
@@ -32,12 +33,16 @@ import com.ideas2it.onlinestore.service.ProductService;
 import com.ideas2it.onlinestore.service.StockService;
 import com.ideas2it.onlinestore.util.configuration.JwtFilter;
 import com.ideas2it.onlinestore.util.constants.Constant;
-import com.ideas2it.onlinestore.util.customException.InsufficientStockException;
-import com.ideas2it.onlinestore.util.customException.OnlineStoreException;
 import com.ideas2it.onlinestore.util.customException.DataNotFoundException;
+import com.ideas2it.onlinestore.util.customException.InsufficientStockException;
 
 
 /**
+ * This class represents the implementation for the
+ * Cart Service interface and overrides all the methods 
+ * present in the service interface. In addition to it
+ * this class can have some additional methods that are
+ * required to implement the desired business logic.
  * 
  * @author Aabid
  * @version 1.0
@@ -47,14 +52,10 @@ import com.ideas2it.onlinestore.util.customException.DataNotFoundException;
 @Service
 public class CartServiceImpl implements CartService {
 	
-	private CartRepository cartRepository;
-	
-	private ProductService productService;
-	
-	private StockService stockService;
-	
+	private CartRepository cartRepository;	
+	private ProductService productService;	
+	private StockService stockService;	
     private Logger logger = LogManager.getLogger(CartServiceImpl.class);
-
 	private final ModelMapper mapper = new ModelMapper();
 	
 	@Autowired
@@ -66,7 +67,7 @@ public class CartServiceImpl implements CartService {
 		this.stockService = stockService;
 	}	
 	
-	/**
+	/** 
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -74,14 +75,17 @@ public class CartServiceImpl implements CartService {
 		Cart cart = cartRepository.save(mapper.map(cartDTO, Cart.class));
 		logger.info(Constant.CART_CREATED);
 		return mapper.map(cart, CartDTO.class);
+		
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public CartDTO addToCart(long productId, int quantity) throws OnlineStoreException {
+	public CartDTO addProductToCart(CartProductInputDTO cartProductInputDTO) {
 		User user = JwtFilter.threadLocal.get();
+		long productId = cartProductInputDTO.getProductId();
+		int quantity = cartProductInputDTO.getQuantity();
 		Product product = mapper.map(productService.getById(productId), Product.class);
 		
 		if (null != user) {
@@ -92,13 +96,15 @@ public class CartServiceImpl implements CartService {
 				
 				if(Objects.equals(cartProduct.getProduct().getId(), product.getId())) {
 					quantity = quantity + cartProduct.getQuantity();
+					cartProduct.setQuantity(quantity);
+				} else {
+					cartProduct = new CartProduct(quantity, product);
+					cartProducts.add(cartProduct);					
 				}
 			}
 			int stockQuantity = stockService.getQuantity(product.getName());
 			
 			if (stockQuantity > quantity) {
-				CartProduct cartProduct = new CartProduct(quantity, product);
-				cartProducts.add(cartProduct);
 				cart.setCartProducts(cartProducts);
 				cart.setCartTotal(updateCartTotal(cartProducts));
 				CartDTO cartDTO = convertCartEntityToDTO(cartRepository.save(cart));
@@ -118,7 +124,7 @@ public class CartServiceImpl implements CartService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public CartDTO removeFromCart(long productId) {
+	public CartDTO removeProductFromCart(long productId) {
 		User user = JwtFilter.threadLocal.get();
 		
 		if (null != user) {			
@@ -137,15 +143,14 @@ public class CartServiceImpl implements CartService {
 				cart.setCartProducts(cartProducts);
 				CartDTO cartDTO = convertCartEntityToDTO(cartRepository.save(cart));
 				logger.info(Constant.REMOVE_FROM_CART);
-				return cartDTO;
-				
+				return cartDTO;				
 			} else {
 				logger.info(Constant.EMPTY_CART);
-				throw new OnlineStoreException(Constant.EMPTY_CART, HttpStatus.NO_CONTENT); 
+				throw new DataNotFoundException(Constant.EMPTY_CART, HttpStatus.NOT_FOUND); 
 			}
 		} else {
 			logger.error(Constant.USER_NOT_FOUND);
-			throw new OnlineStoreException(Constant.USER_NOT_FOUND, HttpStatus.NO_CONTENT);
+			throw new DataNotFoundException(Constant.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
 		}
 	}
 
@@ -153,7 +158,7 @@ public class CartServiceImpl implements CartService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public CartDTO getCart() throws OnlineStoreException {
+	public CartDTO findCartDetails() {
 		User user = JwtFilter.threadLocal.get();
 		Cart cart = user.getCart();
 		cart.setCartTotal(updateCartTotal(cart.getCartProducts()));
@@ -163,8 +168,8 @@ public class CartServiceImpl implements CartService {
 	}
 	
 	/**
-	 * This methods calculates the current cart total by fetching
-	 * the price of each product that has been added to the cart.
+	 * <p>This methods calculates the current cart total by fetching
+	 * the price of each product that has been added to the cart.</p>
 	 * 
 	 * @param cartProducts(List of products that have been added 
 	 * to the cart)
@@ -183,8 +188,8 @@ public class CartServiceImpl implements CartService {
 	}
 	
 	/**
-	 * This method takes a cart object and converts it into 
-	 * a cartDTO object.
+	 * <p>This method takes a cart object and converts it into 
+	 * a cartDTO object.</p>
 	 * @param cart(cart object)
 	 * @return CartDTO
 	 */
