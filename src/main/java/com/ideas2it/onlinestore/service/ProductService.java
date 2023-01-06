@@ -11,7 +11,6 @@ import java.util.List;
 
 import com.ideas2it.onlinestore.dto.BrandDTO;
 import com.ideas2it.onlinestore.dto.ProductDTO;
-import com.ideas2it.onlinestore.util.customException.OnlineStoreException;
 
 /**
  * All the operations like Create, update, delete, view, validation and other
@@ -32,7 +31,7 @@ public interface ProductService {
 	 * @throws OnlineStoreException - throws exception if anything went wrong
 	 * while creating product.
 	 */
-	ProductDTO addProduct(ProductDTO product) throws OnlineStoreException;
+	ProductDTO addProduct(ProductDTO product);
 
 	/**
 	 * Used to get all the products.It throws exception if no products found.
@@ -41,7 +40,7 @@ public interface ProductService {
 	 * @throws OnlineStoreException - throws exception if anything went wrong
 	 * while getting all the products.
 	 */
-	List<ProductDTO> getAll() throws OnlineStoreException;
+	List<ProductDTO> getAll();
 
 	/**
 	 * Used to view a product by id if it exists otherwise it throws
@@ -51,7 +50,7 @@ public interface ProductService {
 	 * @return product if it exists otherwise it throws exception.
 	 * @throws OnlineStoreException if product is not found.
 	 */
-	ProductDTO getById(Long productId) throws OnlineStoreException;
+	ProductDTO getById(Long productId);
 	
 	/**
 	 * Used to view a list of product by id if it exists by category otherwise 
@@ -61,7 +60,7 @@ public interface ProductService {
 	 * @return list of product.
 	 * @throws OnlineStoreException if product is not found.
 	 */
-	List<ProductDTO> getByCategory(Long categoryId) throws OnlineStoreException;
+	List<ProductDTO> getByCategory(Long categoryId);
 	
 	/**
 	 * Used to view a list of product by id if it exists by sub category 
@@ -71,7 +70,7 @@ public interface ProductService {
 	 * @return list of product.
 	 * @throws OnlineStoreException if product is not found.
 	 */
-    List<ProductDTO> getBySubCategory(Long subCategoryId) throws OnlineStoreException;
+    List<ProductDTO> getBySubCategory(Long subCategoryId) ;
 	
 	/**
 	 * Used to view a list of product by brand if it exists by brand otherwise
@@ -81,7 +80,7 @@ public interface ProductService {
 	 * @return list of product.
 	 * @throws OnlineStoreException if product is not found.
 	 */
-	List<ProductDTO> getByBrand(Long brandId) throws OnlineStoreException ;
+	List<ProductDTO> getByBrand(Long brandId);
 	
 	/**
 	 * Create a brand and returns it if it is created otherwise it returns null.
@@ -97,7 +96,7 @@ public interface ProductService {
 	 * @return list of brands
 	 * @throws OnlineStoreException if brands are not found.
 	 */
-	List<BrandDTO> getAllBrands() throws OnlineStoreException;
+	List<BrandDTO> getAllBrands();
 
 	/**
 	 * Updates brand and brand based on whether the brand is 
@@ -107,7 +106,7 @@ public interface ProductService {
 	 * @return brand based on whether the brand is updated or not.
 	 * @throws OnlineStoreException if something went wrong while updating brand.
 	 */
-	BrandDTO updateBrand(BrandDTO brand) throws OnlineStoreException;
+	BrandDTO updateBrand(BrandDTO brand) ;
 
 	/**
 	 * Used to view a brand by id if it exists otherwise it throws
@@ -117,7 +116,7 @@ public interface ProductService {
 	 * @return brand if it exists.
 	 * @throws OnlineStoreException if brand not found.
 	 */
-	BrandDTO getBrand(Long brandId) throws OnlineStoreException;
+	BrandDTO getBrand(Long brandId);
 
 	/**
 	 * Checks and returns true or false based on whether the brand name is
@@ -137,7 +136,7 @@ public interface ProductService {
 	 * @throws OnlineStoreException if the product is not found or it is not 
 	 * updated.
 	 */
-	ProductDTO updateProduct(ProductDTO product) throws OnlineStoreException;
+	ProductDTO updateProduct(ProductDTO product);
 	
 	/**
 	 * Checks whether product is created and creates stock if product is 
@@ -147,5 +146,5 @@ public interface ProductService {
 	 * @return product which is inserted
 	 * @throws OnlineStoreException if product and stock is not created.
 	 */
-	ProductDTO createStockForProduct(ProductDTO product) throws OnlineStoreException;
+	ProductDTO createStockForProduct(ProductDTO product);
 }

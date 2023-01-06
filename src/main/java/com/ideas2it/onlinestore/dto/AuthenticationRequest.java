@@ -7,6 +7,11 @@
  */
 package com.ideas2it.onlinestore.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+
 /**
  * It represents the AuthenticationRequest.
  *
@@ -14,31 +19,12 @@ package com.ideas2it.onlinestore.dto;
  * @version - 1.0
  * @since - 2022-12-20
  */
+@Getter
+@Setter
 public class AuthenticationRequest {
 
-
-    private String email;
-
+    @NotBlank(message = "Username should be mentioned")
+    private String username;
+    @NotBlank(message="Password should be mentioned")
 	private String password;
-	
-    public AuthenticationRequest(String email, String password) {
-		this.email = email;
-		this.password = password;
-	}
-
-    public String getUsername() {
-        return email;
-    }
-
-    public void setUsername(String username) {
-        this.email = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

@@ -7,7 +7,10 @@
  */
 package com.ideas2it.onlinestore.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * It is a simple JavaBean domain object representing a Role.
@@ -17,13 +20,9 @@ import javax.persistence.Entity;
  * @since - 2022-12-17
  */
 @Entity
+@Getter
+@Setter
 public class Role extends BaseModel {
+    @Column(nullable = false)
     private String type;
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 }

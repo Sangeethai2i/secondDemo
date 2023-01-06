@@ -11,6 +11,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ideas2it.onlinestore.model.User;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  * Repository of User
@@ -37,10 +38,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByMobileNumber(String mobileNumber);
 
     /**
-     * Get all registered user details.
-     *
-     * @return List<User>    details of registered user details.
+     * {@inheritDoc}
      */
     @Override
+    @Query("from User where deleted = false")
     List<User> findAll();
 }

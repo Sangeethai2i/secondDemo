@@ -7,11 +7,10 @@
  */
 package com.ideas2it.onlinestore.model;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotNull;
+import javax.persistence.*;
 
-import org.hibernate.annotations.Where;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * It is a simple JavaBean domain object representing an Address.
@@ -21,89 +20,24 @@ import org.hibernate.annotations.Where;
  * @since - 2022-12-17
  */
 @Entity
-@Where(clause = "deleted = '0'")
+@Getter
+@Setter
 public class Address extends BaseModel{
-    @NotNull
+    @Column(nullable = false)
     private String doorNumber;
-    @NotNull
+    @Column(nullable = false)
     private String street;
-    @NotNull
+    @Column(nullable = false)
     private String city;
-    @NotNull
+    @Column(nullable = false)
     private int pinCode;
-    @NotNull
+    @Column(nullable = false)
     private String state;
-    @NotNull
+    @Column(nullable = false)
     private String type;
-    @NotNull
+    @Column(nullable = false)
     private String landmark;
-
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="user_id", nullable = false)
     private User user;
-
-    public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public String getLandmark() {
-        return landmark;
-    }
-
-    public void setLandmark(String landmark) {
-        this.landmark = landmark;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getDoorNumber() {
-        return doorNumber;
-    }
-
-
-    public void setDoorNumber(String doorNumber) {
-        this.doorNumber = doorNumber;
-    }
-
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public int getPinCode() {
-        return pinCode;
-    }
-
-    public void setPinCode(int pinCode) {
-        this.pinCode = pinCode;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 }

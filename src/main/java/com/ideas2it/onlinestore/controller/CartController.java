@@ -7,6 +7,8 @@
  */
 package com.ideas2it.onlinestore.controller;
 
+import com.ideas2it.onlinestore.dto.CartDTO;
+import com.ideas2it.onlinestore.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ideas2it.onlinestore.dto.CartDTO;
 import com.ideas2it.onlinestore.dto.CartProductInputDTO;
-import com.ideas2it.onlinestore.service.CartService;
 import com.ideas2it.onlinestore.util.constants.Constant;
 
 import io.swagger.annotations.ApiOperation;

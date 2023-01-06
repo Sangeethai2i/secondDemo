@@ -8,18 +8,20 @@
 package com.ideas2it.onlinestore.controller;
 
 import java.util.List;
-
-import com.ideas2it.onlinestore.util.customAnnotations.CustomRestController;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 import com.ideas2it.onlinestore.model.Product;
 import com.ideas2it.onlinestore.service.WishlistService;
-import com.ideas2it.onlinestore.util.customException.OnlineStoreException;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for Wishlist
@@ -45,14 +47,13 @@ public class WishlistController {
      *
      * @param productId                 product id of the product.
      * @return ResponseEntity<String>   status message.
-     * @throws OnlineStoreException     occur when wishlist or product is not found.
      */
-    @PostMapping("/add")
+    @PostMapping("/product/{id}")
     @ApiOperation(value = "Add Product To Wishlist",
             notes = "User can Add liked product to his wishlist",
             response = String.class)
     public ResponseEntity<String> addProductToWishlist(@ApiParam(name = "ID", value = "ID of the Product")
-                                                           @RequestParam("id") long productId) throws OnlineStoreException {
+                                                           @PathVariable("id") long productId) {
         return ResponseEntity.status(HttpStatus.OK).body(wishlistService.addProductToWishlist(productId));
     }
 
@@ -63,29 +64,28 @@ public class WishlistController {
      *
      * @param productId                 product id of the product.
      * @return ResponseEntity<String>   status message.
-     * @throws OnlineStoreException     occur when wishlist or product is not found.
      */
-    @PostMapping("/remove")
+    @DeleteMapping("/product/{id}")
     @ApiOperation(value = "Remove Product From Wishlist",
             notes = "User can remove product from his wishlist",
             response = String.class)
     public ResponseEntity<String> removeProductFromWishlist(@ApiParam(name = "ID", value = "ID of the Product")
-                                                                @RequestParam("id") long productId) throws OnlineStoreException {
+                                                                @PathVariable("id") long productId) {
         return ResponseEntity.status(HttpStatus.OK).body(wishlistService.removeProductFromWishlist(productId));
     }
 
     /**
-     * Get all products from the user wishlist.
-     * if the given wishlist id is not valid or products not exists throws OnlineStoreException.
+     * Get all liked products from the user
+     * wishlist whatever user is saved into it.
+     * if products not exists throws OnlineStoreException.
      *
-     * @return ResponseEntity<List<Product>>       liked products in user wishlist.
-     * @throws OnlineStoreException                occur when wishlist or products are not exists.
+     * @return List<Product>             liked products in user wishlist.
      */
-    @GetMapping
+    @GetMapping("/products/all")
     @ApiOperation(value = "View All Wishlist Products",
             notes = "View All wishlist products in the user wishlist",
             response = Product.class)
-    public ResponseEntity<List<Product>> getWishlistProducts() throws OnlineStoreException {
-        return ResponseEntity.status(HttpStatus.OK).body(wishlistService.getAllWishlistProducts());
+    public List<Product> getWishlistProducts() {
+        return wishlistService.getAllWishlistProducts();
     }
 }

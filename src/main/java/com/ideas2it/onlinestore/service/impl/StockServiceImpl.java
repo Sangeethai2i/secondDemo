@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.ideas2it.onlinestore.util.configuration.JwtFilter;
+import com.ideas2it.onlinestore.util.customException.DataNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +24,7 @@ import com.ideas2it.onlinestore.model.Product;
 import com.ideas2it.onlinestore.model.Stock;
 import com.ideas2it.onlinestore.repository.StockRepository;
 import com.ideas2it.onlinestore.service.StockService;
-import com.ideas2it.onlinestore.util.configuration.JwtFilter;
 import com.ideas2it.onlinestore.util.constants.Constant;
-import com.ideas2it.onlinestore.util.customException.DataNotFoundException;
 import com.ideas2it.onlinestore.util.customException.ResourcePersistenceException;
 import com.ideas2it.onlinestore.util.mapper.StockMapper;
 
@@ -64,9 +64,9 @@ public class StockServiceImpl implements StockService {
 			for (Stock stock : stocks) {
 				if ((stock.getSeller().getId() == JwtFilter.getThreadLocal().get().getId())
 						&& (new java.sql.Date(product.getDateOfManufacture().getTime()).toString().substring(0, 10)
-								.equals(stock.getDateOfManufacture().toString().substring(0, 10)))
+						.equals(stock.getDateOfManufacture().toString().substring(0, 10)))
 						&& (new java.sql.Date(product.getDateOfExpire().getTime()).toString().substring(0, 10)
-								.equals(stock.getDateOfExpire().toString().substring(0, 10)))) {
+						.equals(stock.getDateOfExpire().toString().substring(0, 10)))) {
 					stock.setQuantity(stock.getQuantity() + product.getQuantity());
 					stockProduct = stockRepository.save(stock);
 					break;
@@ -143,7 +143,7 @@ public class StockServiceImpl implements StockService {
 
 	/**
 	 * {@inheritDoc}
-	 */ 
+	 */
 	@Override
 	public int getQuantity(String productName) {
 		int quantity = 0;
@@ -214,7 +214,7 @@ public class StockServiceImpl implements StockService {
 					stock.setQuantity(quantities.get(count));
 					stockRepository.save(stock);
 					quantity = -(quantity);
-					count++; 
+					count++;
 				} else {
 					stock.setQuantity(quantities.get(count));
 					stockRepository.save(stock);
@@ -227,14 +227,14 @@ public class StockServiceImpl implements StockService {
 		}
 		return isUpdated;
 	}
-	
+
 	/**
 	 * <p>
 	 * This method is used for save the stock into database
 	 * It's for reducing boiler plate code.
 	 * It's set the all stock fields by using product
-	 * </p> 
-	 * 
+	 * </p>
+	 *
 	 * @param product     - details of the product
 	 * @return stock      - details of the stock
 	 */

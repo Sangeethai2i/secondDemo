@@ -7,10 +7,9 @@
  */
 package com.ideas2it.onlinestore.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * It is a simple JavaBean domain object representing a Role.
@@ -19,34 +18,11 @@ import javax.validation.constraints.NotBlank;
  * @version - 1.0
  * @since - 2022-12-17
  */
+@Getter
+@Setter
 public class RoleDTO  {
+
     private long id;
     @NotBlank(message = "Role must be mentioned")
     private String type;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public UserDTO getUser() {
-        return user;
-    }
-
-    public void setUser(UserDTO user) {
-        this.user = user;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private UserDTO user;
 }

@@ -9,7 +9,8 @@ package com.ideas2it.onlinestore.controller;
 
 import java.util.Date;
 import java.util.List;
-
+import com.ideas2it.onlinestore.dto.OrderDTO;
+import com.ideas2it.onlinestore.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ideas2it.onlinestore.dto.OrderDTO;
 import com.ideas2it.onlinestore.model.Message;
-import com.ideas2it.onlinestore.service.OrderService;
 import com.ideas2it.onlinestore.util.constants.Constant;
 
 import io.swagger.annotations.ApiOperation;

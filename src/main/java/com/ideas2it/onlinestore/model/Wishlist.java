@@ -7,17 +7,15 @@
  */
 package com.ideas2it.onlinestore.model;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.NotNull;
-
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -29,8 +27,10 @@ import org.hibernate.annotations.LazyCollectionOption;
  * @since - 2022-12-17
  */
 @Entity
+@Getter
+@Setter
 public class Wishlist extends BaseModel {
-    @NotNull
+    @Column(columnDefinition = "varchar(255) not null")
     private String name;
     @OneToOne
     @JoinColumn(name="user_id")
@@ -41,28 +41,4 @@ public class Wishlist extends BaseModel {
             joinColumns = { @JoinColumn(name = "wishlist_id")},
             inverseJoinColumns = { @JoinColumn(name = "product_id")})
     private List<Product> products;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
 }

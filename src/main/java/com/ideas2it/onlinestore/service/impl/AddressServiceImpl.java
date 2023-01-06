@@ -8,6 +8,10 @@
 package com.ideas2it.onlinestore.service.impl;
 
 import java.util.List;
+
+import com.ideas2it.onlinestore.util.configuration.JwtFilter;
+import com.ideas2it.onlinestore.util.customException.DataNotFoundException;
+import com.ideas2it.onlinestore.util.customException.ResourcePersistenceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
@@ -21,11 +25,9 @@ import com.ideas2it.onlinestore.model.User;
 import com.ideas2it.onlinestore.repository.AddressRepository;
 import com.ideas2it.onlinestore.service.AddressService;
 import com.ideas2it.onlinestore.util.constants.Constant;
-import com.ideas2it.onlinestore.util.configuration.JwtFilter;
-import com.ideas2it.onlinestore.util.customException.OnlineStoreException;
 
 /**
- * Service Implementation of Address.
+ * Service Implementation class for Address.
  *
  * @author - Gokul V
  * @version - 1.0
@@ -45,7 +47,7 @@ public class AddressServiceImpl implements AddressService {
      * {@inheritDoc}
      */
     @Override
-    public String addAddress(AddressDTO addressDTO) throws OnlineStoreException{
+    public String addAddress(AddressDTO addressDTO) {
         User user = JwtFilter.getThreadLocal().get();
         ModelMapper modelMapper = new ModelMapper();
         Address address = modelMapper.map(addressDTO, Address.class);
@@ -53,8 +55,7 @@ public class AddressServiceImpl implements AddressService {
         address = addressRepository.save(address);
 
         if (!(0 < address.getId())) {
-            logger.error(Constant.ADDRESS_NOT_ADDED);
-            throw new OnlineStoreException(Constant.ADDRESS_NOT_ADDED, HttpStatus.NOT_ACCEPTABLE);
+            throw new ResourcePersistenceException(Constant.ADDRESS_NOT_ADDED, HttpStatus.NOT_ACCEPTABLE);
         }
         logger.info(Constant.ADDRESS_ADDED_SUCCESSFULLY);
         return user.getFirstName() + Constant.ADDRESS_ADDED_SUCCESSFULLY;
@@ -64,7 +65,7 @@ public class AddressServiceImpl implements AddressService {
      * {@inheritDoc}
      */
     @Override
-    public String deleteAddress(long id) throws OnlineStoreException{
+    public String deleteAddress(long id){
         User user = JwtFilter.getThreadLocal().get();
         List<Address> addresses = user.getAddresses();
 
@@ -76,20 +77,19 @@ public class AddressServiceImpl implements AddressService {
                 return user.getFirstName() + Constant.ADDRESS_DELETED_SUCCESSFULLY;
             }
         }
-        logger.error(Constant.INVALID_DETAILS);
-        throw new OnlineStoreException(Constant.INVALID_DETAILS, HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new DataNotFoundException(Constant.ADDRESS_NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public AddressDTO getAddressById(long id) throws OnlineStoreException {
+    public AddressDTO getAddressById(long id) {
         Address address = addressRepository.findById(id).orElse(null);
         
         if (null == address || address.isDeleted()) {
             logger.error(Constant.ADDRESS_NOT_FOUND);
-            throw new OnlineStoreException(Constant.ADDRESS_NOT_FOUND, HttpStatus.NOT_FOUND);
+            throw new DataNotFoundException(Constant.ADDRESS_NOT_FOUND, HttpStatus.NOT_FOUND);
         }
         ModelMapper modelMapper = new ModelMapper();
         logger.info(Constant.DETAILS_FETCHED_SUCCESSFULLY);

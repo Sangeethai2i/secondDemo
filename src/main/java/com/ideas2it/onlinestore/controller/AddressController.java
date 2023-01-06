@@ -8,19 +8,22 @@
 package com.ideas2it.onlinestore.controller;
 
 import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.ideas2it.onlinestore.dto.AddressDTO;
 import com.ideas2it.onlinestore.dto.UserDTO;
 import com.ideas2it.onlinestore.service.AddressService;
-import com.ideas2it.onlinestore.util.customException.OnlineStoreException;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 /**
  * Controller for Address.
  *
@@ -31,6 +34,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/address")
 public class AddressController {
+
     private AddressService addressService;
 
     @Autowired
@@ -39,37 +43,36 @@ public class AddressController {
     }
 
     /**
-     * Add the address to the user using given address details.
-     * if the address details are not valid throws OnlineStoreException otherwise returns message.
+     * Add address to the user using given address details.
+     * if the address details are not valid throws
+     * OnlineStoreException otherwise returns message.
      *
-     * @param address                  details of the address.
-     * @return ResponseEntity<String>  status message.
-     * @throws OnlineStoreException    occur when user id or address details are not valid.
+     * @param addressDTO                 details of the address.
+     * @return ResponseEntity<String>    status message.
      */
     @PostMapping
     @ApiOperation(value = "Add Address",
             notes = "This Api add address details to the user",
             response = UserDTO.class)
-    public ResponseEntity<String> add(@Valid @RequestBody AddressDTO address) throws OnlineStoreException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(addressService.addAddress(address));
+    public ResponseEntity<String> addAddress(@Valid @RequestBody AddressDTO addressDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(addressService.addAddress(addressDTO));
     }
 
     /**
-     * Deletes the address from the user using given user and address id.
-     * if the given user or address id is not valid throws OnlineStoreException
+     * Deletes the address from the user using given address id.
+     * if the given address id is not exists throws OnlineStoreException
      * otherwise returns message.
      *
      * @param addressId                 id of the address.
      * @return ResponseEntity<String>   status message.
-     * @throws OnlineStoreException     occur when user or address id is not found.
      */
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     @ApiOperation(value = "Delete User Address",
             notes = "This Api Remove the address from the user account",
             response = UserDTO.class)
-    public ResponseEntity<String> delete(
+    public ResponseEntity<String> deleteAddress(
     		@ApiParam(name = "ID", value = "ID of the Address") 
-			@RequestParam("ID") long addressId) throws OnlineStoreException {
+			@PathVariable("id") long addressId){
         return ResponseEntity.status(HttpStatus.OK).body(addressService.deleteAddress(addressId));
     }
 }

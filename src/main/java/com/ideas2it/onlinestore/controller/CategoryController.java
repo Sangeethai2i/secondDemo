@@ -49,7 +49,7 @@ public class CategoryController {
 	 * front end If this category DTO fields are valid it will pass the object into
 	 * service else it throw MethodArgumentNotValidException
 	 * </p>
-	 * 
+	 *
 	 * @param categoryDTO - details of the categoryDTO
 	 * @return ResponseEntity<CategoryDTO> - category DTO object as a response
 	 *         entity
@@ -66,7 +66,7 @@ public class CategoryController {
 	 * of category DTO if categories not exists throws OnlineStoreException
 	 * otherwise returns user details.
 	 * </p>
-	 * 
+	 *
 	 * @return List<CategoryDTO> - list of categories as a response entity
 	 */
 	@GetMapping
@@ -82,7 +82,7 @@ public class CategoryController {
 	 * database it will get the all list of sub category else it will throw
 	 * OnlineStoreException
 	 * </p>
-	 * 
+	 *
 	 * @param categoryName - name of the category
 	 * @return CategoryDTO - list of sub categories as a response entity
 	 */

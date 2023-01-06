@@ -8,15 +8,15 @@ import org.springframework.http.HttpStatus;
  * @version 1.0
  * @author arunkumar			
  */
-public class CategoryExistException extends RuntimeException {
+public class RedundantDataException extends RuntimeException {
 
 	public HttpStatus httpStatus;
 	
-	public CategoryExistException(String message) {
+	public RedundantDataException(String message) {
 		super(message);
 	}
 	
-	public CategoryExistException(String message, HttpStatus httpStatus) {
+	public RedundantDataException(String message, HttpStatus httpStatus) {
 		super(message);
 		this.httpStatus = httpStatus;
 	}

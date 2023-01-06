@@ -28,7 +28,6 @@ import com.ideas2it.onlinestore.dto.ProductDTO;
 import com.ideas2it.onlinestore.dto.StockDTO;
 import com.ideas2it.onlinestore.service.ProductService;
 import com.ideas2it.onlinestore.service.StockService;
-import com.ideas2it.onlinestore.util.customException.OnlineStoreException;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -45,6 +44,7 @@ import io.swagger.annotations.ApiParam;
 public class ProductController {
 
 	private ProductService productService;
+	
 	private StockService stockService;
 	
 	@Autowired
@@ -67,7 +67,7 @@ public class ProductController {
 	@ApiOperation(value = "Adds new product",
             notes = "Seller can Add new products",
             response = ProductDTO.class)
-	private ResponseEntity<ProductDTO> add(@Valid @RequestBody ProductDTO product) throws OnlineStoreException {
+	private ResponseEntity<ProductDTO> add(@Valid @RequestBody ProductDTO product) {
 		return new ResponseEntity<>(productService.addProduct(product), HttpStatus.CREATED);
 	}
 
@@ -82,7 +82,7 @@ public class ProductController {
 	@ApiOperation(value = "Shows all the projects",
             notes = "User can view all the products available",
             response = ProductDTO.class)
-	private ResponseEntity<List<ProductDTO>> getAll() throws OnlineStoreException {
+	private ResponseEntity<List<ProductDTO>> getAll() {
 		return new ResponseEntity<List<ProductDTO>>(productService.getAll(), HttpStatus.OK);
 	}
 
@@ -99,7 +99,7 @@ public class ProductController {
 	@ApiOperation(value = "Shows products by brand",
             notes = "User can view all the products available in a particular brand",
             response = ProductDTO.class)
-	private ResponseEntity<Object> getByBrand(@ApiParam(name = "ID", value = "id of the brand") @RequestParam("id") Long brandId) throws OnlineStoreException {
+	private ResponseEntity<Object> getByBrand(@ApiParam(name = "ID", value = "id of the brand") @RequestParam("id") Long brandId){
 		return new ResponseEntity<>(productService.getBrand(brandId), HttpStatus.OK);
 	}
 
@@ -117,7 +117,7 @@ public class ProductController {
     notes = "User can view all the products available in a particular category",
     response = ProductDTO.class)
 	private ResponseEntity<Object> getByCategory(@ApiParam(name = "ID", value = "id of the category") @RequestParam("id") Long categoryId)
-			throws OnlineStoreException {
+			 {
 		return new ResponseEntity<>(productService.getByCategory(categoryId), HttpStatus.OK);
 	}
 
@@ -135,7 +135,7 @@ public class ProductController {
     notes = "User can view all the products available in a particular sub category",
     response = ProductDTO.class)
 	private ResponseEntity<Object> getBySubCategory(@ApiParam(name = "ID", value = "id of the sub category") @RequestParam("id") Long subCategoryId)
-			throws OnlineStoreException {
+			 {
 		return new ResponseEntity<>(productService.getBySubCategory(subCategoryId), HttpStatus.OK);
 	}
 
@@ -154,7 +154,7 @@ public class ProductController {
     notes = "Seller can update the product available",
     response = ProductDTO.class)
 	private ResponseEntity<ProductDTO> update(@ApiParam(name = "ID", value = "id of the product to be updated") @RequestParam("id") Long productId,
-			@RequestBody ProductDTO product) throws OnlineStoreException {
+			@RequestBody ProductDTO product) {
 		product.setId(productId);
 		return new ResponseEntity<ProductDTO>(productService.updateProduct(product), HttpStatus.OK);
 	}
@@ -172,7 +172,7 @@ public class ProductController {
 	@ApiOperation(value = "Shows product by id",
     notes = "User can view the product available by id",
     response = ProductDTO.class)
-	private ResponseEntity<ProductDTO> getById(@ApiParam(name = "ID", value = "id of the product to be viewed") @RequestParam("id") Long productId) throws OnlineStoreException {
+	private ResponseEntity<ProductDTO> getById(@ApiParam(name = "ID", value = "id of the product to be viewed") @RequestParam("id") Long productId) {
 		return new ResponseEntity<ProductDTO>(productService.getById(productId), HttpStatus.OK);
 	}
 
@@ -189,7 +189,7 @@ public class ProductController {
 	@ApiOperation(value = "Adds brand",
     notes = "Admin can create a new brand",
     response = BrandDTO.class)
-	private ResponseEntity<BrandDTO> addBrand(@Valid @RequestBody BrandDTO brand) throws OnlineStoreException {
+	private ResponseEntity<BrandDTO> addBrand(@Valid @RequestBody BrandDTO brand) {
 		return new ResponseEntity<BrandDTO>(productService.addBrand(brand), HttpStatus.CREATED);
 	}
 
@@ -205,7 +205,7 @@ public class ProductController {
 	@ApiOperation(value = "Shows all the brands",
     notes = "User can view all the brands",
     response = BrandDTO.class)
-	private ResponseEntity<List<BrandDTO>> viewBrands() throws OnlineStoreException {
+	private ResponseEntity<List<BrandDTO>> viewBrands()  {
 		return new ResponseEntity<List<BrandDTO>>(productService.getAllBrands(), HttpStatus.OK);
 	}
 
@@ -224,7 +224,7 @@ public class ProductController {
 		    response = BrandDTO.class)
 	@PutMapping("/brand")
 	private ResponseEntity<BrandDTO> updateBrand(@ApiParam(name = "ID", value = "id of the brand to be updated") @RequestParam("id") Long brandId,
-			@RequestBody BrandDTO brand) throws OnlineStoreException {		
+			@RequestBody BrandDTO brand)  {
         brand.setId(brandId);           
 		return new ResponseEntity<BrandDTO>(productService.updateBrand(brand), HttpStatus.OK);
 	}
@@ -243,7 +243,7 @@ public class ProductController {
 	@ApiOperation(value = "Shows the brand by id",
     notes = "User can view the brand available",
     response = BrandDTO.class)
-	private ResponseEntity<BrandDTO> viewBrand(@ApiParam(name = "ID", value = "id of the brand to be viewed") @RequestParam("id") Long brandId) throws OnlineStoreException {
+	private ResponseEntity<BrandDTO> viewBrand(@ApiParam(name = "ID", value = "id of the brand to be viewed") @RequestParam("id") Long brandId) {
 		return new ResponseEntity<BrandDTO>(productService.getBrand(brandId), HttpStatus.OK);
 	}
 	

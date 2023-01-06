@@ -8,7 +8,6 @@
 package com.ideas2it.onlinestore.service;
 
 import com.ideas2it.onlinestore.dto.AddressDTO;
-import com.ideas2it.onlinestore.util.customException.OnlineStoreException;
 
 /**
  * Interface for Address service
@@ -20,22 +19,25 @@ import com.ideas2it.onlinestore.util.customException.OnlineStoreException;
 public interface AddressService {
 
     /**
-     * Add address to the user using given user id.
-     * if the given user id is not exists throws OnlineStoreException.
+     * Add address to user using given address details.
+     * if the given address details are not valid
+     * throws OnlineStoreException otherwise returns string message.
      *
      * @param address                 details of the address.
-     * @throws OnlineStoreException   occur when given user id or address is not valid.
+     * @return String                 status message.
      */
-    String addAddress(AddressDTO address) throws OnlineStoreException;
+    String addAddress(AddressDTO address);
 
     /**
-     * Delete the address from the user using given user details.
-     * if the given user or address id is not exists throws OnlineStoreException.
+     * Delete the address from the user using given address id.
+     * if the given address id is not exists throws OnlineStoreException
+     * otherwise returns string message.
      *
      * @param id                      id of the address.
-     * @throws OnlineStoreException   occur when given user or address id is not exists.
+     * @return String                 status message.
      */
-    String deleteAddress(long id) throws OnlineStoreException;
+    String deleteAddress(long id);
+
     /**
      * Get the address using given address id.
      * if the given address id is not valid throws OnlineStoreException otherwise
@@ -43,7 +45,6 @@ public interface AddressService {
      *
      * @param id                        id of the address.
      * @return AddressDTO               details of the address.
-     * @throws OnlineStoreException     occur when given id is not exists.
      */
-    AddressDTO getAddressById(long id) throws OnlineStoreException;
+    AddressDTO getAddressById(long id);
 }
