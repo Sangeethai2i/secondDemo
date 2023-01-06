@@ -5,7 +5,7 @@
  * reproduced in any form by any means without prior written authorization of 
  * Ideas2it and its licensors, if any.
  */
-package com.ideas2it.onlinestore.swagger;
+package com.ideas2it.onlinestore.util.configuration;
 
 import java.util.Arrays;
 import java.util.Collections;

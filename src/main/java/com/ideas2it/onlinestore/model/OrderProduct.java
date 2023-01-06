@@ -17,7 +17,22 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Where;
 
+import lombok.Getter;
+import lombok.Setter;
+/**
+ * This class represents the model we are implementing 
+ * for the Order products. In addition to its own fields
+ * it also extends a base class that contains fields which 
+ * are common across all models. 
+ * 
+ * @author Aabid
+ * @version 1.0
+ * @since 16-12-2022
+ *
+ */
 @Entity
+@Getter
+@Setter
 @Where(clause = "deleted = '0'")
 public class OrderProduct extends BaseModel {
 
@@ -29,21 +44,4 @@ public class OrderProduct extends BaseModel {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Product product;
 
-	public int getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-
-	public Product getProduct() {
-		return product;
-	}
-
-	public void setProduct(Product product) {
-		this.product = product;
-	}
-
-	
 }

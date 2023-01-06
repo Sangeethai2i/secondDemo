@@ -6,6 +6,9 @@
  * Ideas2it and its licensors, if any.
  */
 package com.ideas2it.onlinestore.dto;
+
+import lombok.Data;
+
 /**
  * 
  * @author Aabid
@@ -13,45 +16,14 @@ package com.ideas2it.onlinestore.dto;
  * @since 16-12-2022
  *
  */
+@Data
 public class OrderProductDTO  {
 	
 	private long id;
-
+	
 	private int quantity;
 	
-
 	private ProductDTO product;
-
-
-	public long getId() {
-		return id;
-	}
-
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-
-	public int getQuantity() {
-		return quantity;
-	}
-
-
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-
-
-	public ProductDTO getProduct() {
-		return product;
-	}
-
-
-	public void setProduct(ProductDTO product) {
-		this.product = product;
-	}
-
 	
 }
 

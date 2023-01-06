@@ -18,8 +18,28 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Where;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+/**
+ * This class represents the model we are implementing 
+ * for the Cart products. In addition to its own fields 
+ * it also extends a base class that contains fields which 
+ * are common across all models. 
+ * 
+ * @author Aabid
+ * @version 1.0
+ * @since 16-12-2022
+ *
+ */
 @Entity
-@Where(clause = "deleted = false")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Where(clause = "deleted = '0'")
 public class CartProduct extends BaseModel{
 
 	@Column(name = "quantity", columnDefinition = "int not null")
@@ -30,34 +50,12 @@ public class CartProduct extends BaseModel{
 	@JoinColumn(name = "product_id", nullable = false)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Product product;
-
 	
-	public CartProduct() {
-		super();
-	}
-
-	public CartProduct(@Min(1) int quantity, Product product) {
-		super();
-		this.quantity = quantity;
-		this.product = product;
-	}
-
-	public int getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-
-	public Product getProduct() {
-		return product;
-	}
-
-	public void setProduct(Product product) {
-		this.product = product;
-	}
-
-	
+//	public CartProduct(long id, int quantity, Product product) {
+//		super();
+//		this.quantity = quantity;
+//		this.product = product;
+//		
+//	}
 	
 }

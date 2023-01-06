@@ -12,27 +12,34 @@ import java.util.List;
 import com.ideas2it.onlinestore.dto.OrderDTO;
 
 /**
- * 
+ * This interface represents an interface for Order.
+ * The interface helps to provides loose coupling between this 
+ * service and the corresponding Order controller and 
+ * the flexibility of modifying the business logic without
+ * the concern of having conflicts with the other 
+ * interacting layers.
+ *  
  * @author Aabid
+ * @version 1.0
+ * @since 16-12-2022
  *
  */
 public interface OrderService {
 	
 	/**
-	 * This method takes a userId and an addressId as input,
-	 * fetches and validates both of them and implements the
+	 * <p>This method takes an addressId as input, fetches and 
+	 * validates the address id and implements the
 	 * cart checkout functionality by taking the current cart
-	 * products and adding them to order.
+	 * products and adding them to order.</p>
 	 * 
-	 * @param userId(Id of the user)
 	 * @param addressId(Id of default address of the user)
 	 * @return OrderDTO(DTO object containing order details)
 	 */
 	public OrderDTO placeOrder(long addressId);
 	
 	/**
-	 * This method takes an orderId as input and fetches the details
-	 * of that particular order.
+	 * <p>This method takes an orderId as input and fetches the details
+	 * of the order corresponding to the given order id.</p>
 	 * 
 	 * @param orderId(ID of a particular order)
 	 * @return OrderDTO(DTO object with details of the order)
@@ -40,17 +47,19 @@ public interface OrderService {
 	public OrderDTO getOrderById(long orderId);
 	
 	/**
-	 * This method takes a userId as input and retrieves all
-	 * orders placed by that user.
-	 * @param userId(Id of the user)
-	 * @return List(return a list containing all the orders
+	 * <p>This method retrieves all orders placed by the currently logged in
+	 * user.</p>
+	 * @return List(returns a list containing all the orders
 	 * that have been places by that user)
 	 */
 	public List<OrderDTO> getAllOrders();
 	
 	/**
-	 * This method takes an orderId as input and tries to cancel the 
-	 * order if it is eligible for cancellation.
+	 * <p>This method takes an order Id as input and attempts to cancel the 
+	 * order if it is eligible for cancellation. The method first verifies
+	 * current status of the order and accordingly cancels it if possible</p>
+	 * <p>The method throws a custom exception(DataNotFoundException) if the
+	 * id doesn't correspond to an existing active order.</p>
 	 * 
 	 * @param orderId(Id of the order that is to be cancelled)
 	 * @return true if order is cancelled else returns false.

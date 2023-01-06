@@ -8,6 +8,10 @@
 package com.ideas2it.onlinestore.dto;
 
 import javax.validation.constraints.Min;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import lombok.Data;
 /**
  * 
  * @author Aabid
@@ -15,50 +19,17 @@ import javax.validation.constraints.Min;
  * @since 16-12-2022
  *
  */
+@Data
 public class CartProductDTO {
 	
 	private long id;
 	
 	@Min(1)
 	private int quantity;	
-	
+	@JsonIgnore
 	private boolean deleted;
 	
 	private ProductDTO product;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public int getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-
-	public boolean isDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
-	}
-
-	public ProductDTO getProduct() {
-		return product;
-	}
-
-	public void setProduct(ProductDTO product) {
-		this.product = product;
-	}
-
-	
 	
 }
 

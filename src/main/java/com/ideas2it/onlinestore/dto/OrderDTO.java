@@ -15,6 +15,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.ideas2it.onlinestore.util.constants.OrderStatus;
+
+import lombok.Data;
 /**
  * 
  * @author Aabid
@@ -22,6 +24,7 @@ import com.ideas2it.onlinestore.util.constants.OrderStatus;
  * @since 16-12-2022
  *
  */
+@Data
 public class OrderDTO {
 	
 	private long id;
@@ -37,69 +40,11 @@ public class OrderDTO {
 
 	@JsonIgnore
 	private UserDTO user;
-	
 
 	private List<OrderProductDTO> orderProducts;
 	
 	private AddressDTO address;
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public LocalDate getDate() {
-		return date;
-	}
-
-	public void setDate(LocalDate date) {
-		this.date = date;
-	}
-
-	public double getAmount() {
-		return amount;
-	}
-
-	public void setAmount(double amount) {
-		this.amount = amount;
-	}
-
-	public OrderStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(OrderStatus status) {
-		this.status = status;
-	}
-
-	public UserDTO getUser() {
-		return user;
-	}
-
-	public void setUser(UserDTO user) {
-		this.user = user;
-	}
-
-	public List<OrderProductDTO> getOrderProducts() {
-		return orderProducts;
-	}
-
-	public void setOrderProducts(List<OrderProductDTO> orderProducts) {
-		this.orderProducts = orderProducts;
-	}
-
-	public AddressDTO getAddress() {
-		return address;
-	}
-
-	public void setAddress(AddressDTO address) {
-		this.address = address;
-	}
-
-	
 	
 }
 

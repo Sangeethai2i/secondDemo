@@ -13,8 +13,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,12 +25,15 @@ import com.ideas2it.onlinestore.dto.OrderDTO;
 import com.ideas2it.onlinestore.model.Message;
 import com.ideas2it.onlinestore.service.OrderService;
 import com.ideas2it.onlinestore.util.constants.Constant;
-import com.ideas2it.onlinestore.util.customAnnotations.CustomRestController;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 /**
- * This is a controller class for Order module
+ * <p>This is a controller class for Order module.
+ * It has only those methods that need to be exposed to the
+ * end user. The class interacts and forwards the user requests
+ * to its corresponding service and serves the responses to the 
+ * client accordingly.</p>
  * 
  * @author Aabid
  * @version 1.0
@@ -37,9 +41,8 @@ import io.swagger.annotations.ApiParam;
  *
  */
 @RestController
-@RequestMapping("/sd1")
+@RequestMapping("/order")
 public class OrderController {
-
 	
 	private final OrderService orderService;
 	
@@ -49,74 +52,81 @@ public class OrderController {
 	}
 	
 	/**
-	 * This methods implements cart check-out logic. It 
+	 * <p>This methods implements cart check-out logic. It 
 	 * tracks the contents of cart for the currently logged-in
 	 * user and takes an addressId as a parameter that
 	 * corresponds to the default delivery address of the user.
-	 * The method return an OrderDTO object that contains order details.
+	 * The method return an OrderDTO object that contains order details.</p>
+	 * <p>The method generates a custom exception (DataNotFoundException) 
+	 * if the address id does not correspond to a valid resource.</p>
 	 * 
-	 * @param addressId(Id of the default address of the user)
+	 * @param addressId(Id of the default delivery address of the user)
 	 * @return OrderDTO(contains details of the placed order) 
 	 */
-	@PostMapping("order")
+	@PostMapping("address/{id}")
 	@ApiOperation(value = Constant.PLACE_ORDER,
 	notes = Constant.PLACE_ORDER_DESCRIPTION, 
 	response = OrderDTO.class)
-	public ResponseEntity<OrderDTO> placeOrder(
-			@ApiParam(name = "ID", value = "Delivery address ID") 
-			@RequestParam("ID") long addressId) {
+	public OrderDTO placeOrder(
+			@ApiParam(value = "Delivery address ID") 
+			@PathVariable long id) {
 		
-		OrderDTO savedOder = orderService.placeOrder(addressId);		
-		return new ResponseEntity<OrderDTO>(savedOder, HttpStatus.CREATED);
+		return orderService.placeOrder(id);		
 	}
 	
 	/**
-	 * This method is user to retrieve the information for a
+	 * <p>This method is user to retrieve the information for a
 	 * particular order using the orderId corresponding to that
-	 * order. 
+	 * order. The method only accepts numeric values</p>
+	 * <p>The method throws a custom exception(DataNotFoundException) 
+	 * if the entered order id does not correspond to a valid order</p> 
 	 * 
 	 * @param id(Id of the order whose details are to be fetched)
 	 * @return OrderDTO(contains required details of the order)
 	 */
-	@GetMapping("order")
+	@GetMapping("/{id}")
 	@ApiOperation(value = Constant.SHOW_PARTICULAR_ORDER,
 	notes = Constant.SHOW_PARTICULAR_ORDER_DESCRIPTION, 
 	response = OrderDTO.class)
-	public ResponseEntity<OrderDTO> getOrderById(
-			@ApiParam(name = "ID", value = "Order ID") 
-			@RequestParam("ID") long orderId) {
+	public OrderDTO getOrderById(
+			@ApiParam(value = "Order ID") 
+			@PathVariable long id) {
 		
-		return new ResponseEntity<>(orderService.getOrderById(orderId), HttpStatus.OK);
+		return orderService.getOrderById(id);
 	}
 	
 	/**
-	 * This method is used to retrieve all the orders that have
-	 * been placed so far by a particular user.
-	 * 
-	 * @return ResponseEntity( returns a response which either contains 
-	 * a list of all the orders placed by the user or a custom message
-	 * incase user has not placed any orders so far.
+	 * <p>This method is used to retrieve all the orders that have
+	 * been placed so far by a particular user.It fetches the entire
+	 * order history for the particular user<p> 
+	 * <p>The method returns an empty list if the user has not placed
+	 * any orders at all</p>
+	 * @return List<OrderDTO>( returns a list of all the orders 
+	 * placed by the user)
 	 */
-	@GetMapping("order/all")
+	@GetMapping("/all")
 	@ApiOperation(value = Constant.SHOW_ALL_ORDERS,
 	notes = Constant.SHOW_ALL_ORDERS_DESCRIPTION, 
 	response = OrderDTO.class)
-	public ResponseEntity<List<OrderDTO>> getAllOrders() {
+	public List<OrderDTO> getAllOrders() {
 
-		return new ResponseEntity<List<OrderDTO>>(orderService.getAllOrders(), HttpStatus.OK);
+		return orderService.getAllOrders();
 		
 	}
 	
 	/**
-	 * This method takes an orderId as input and calls on the 
+	 * <p>This method takes an orderId as input and calls on the 
 	 * corresponding service to to cancel the order. A response 
-	 * is generated which contains the status of order cancellation.
+	 * is generated which contains the status of order cancellation.</p>
+	 * <p>The method throws a custom exception (DataNotFoundException)
+	 * if the entered id does not correspond a an active order or if
+	 * there is no order corresponding to the id.</p>
 	 * 
 	 * @param orderId(Id of order that the user wishes to cancel)
 	 * @return ResponseEntity (contains custom message that displays
 	 * the status of order cancellations)
 	 */
-	@PatchMapping("order")	
+	@DeleteMapping("/{id}")	
 	@ApiOperation(value = Constant.UPDATE_ORDER,
 			notes = Constant.UPDATE_ORDER_DESCRIPTION, 
 			response = Message.class)
@@ -130,7 +140,7 @@ public class OrderController {
 					new Date(),
 					Constant.ORDER_CANCELLED
 					);
-			return new ResponseEntity<Message>(message, HttpStatus.NO_CONTENT);
+			return new ResponseEntity<Message>(message, HttpStatus.OK);
 		}
 			Message message = new Message(
 				HttpStatus.NOT_MODIFIED.value(),
