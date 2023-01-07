@@ -96,6 +96,7 @@ public class Constant {
     public static final String ORDER_CANCELLED = "Your order has been cancelled successfully";
     public static final String ORDER_CANCELATION_FAILURE = "There was an error while cancelling this order";
     public static final String CATEGORY_NOT_EXISTS = "Your searching category is not there";
+	public static final String SUB_CATEGORY_NOT_EXISTS = "Your searching sub category is not there";
     public static final String[] AUTH_WHITELIST = {
             // -- Swagger UI v2
             "/v2/api-docs",

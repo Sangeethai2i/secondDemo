@@ -19,6 +19,7 @@ import org.hibernate.annotations.Where;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 /**
  * This class represents the model we are implementing 
  * for the Order products. In addition to its own fields
@@ -34,6 +35,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Where(clause = "deleted = '0'")
+@SuperBuilder
 public class OrderProduct extends BaseModel {
 
 	@Column(name = "quantity", columnDefinition = "int NOT NULL")

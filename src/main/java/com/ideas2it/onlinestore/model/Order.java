@@ -29,6 +29,7 @@ import com.ideas2it.onlinestore.util.constants.OrderStatus;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 /**
  * This class represents the model we are implementing 
  * for the Order. In addition to its own fields it also 
@@ -45,6 +46,7 @@ import lombok.Setter;
 @Setter
 @Where(clause = "deleted = '0'")
 @Table(name = "`order`")
+@SuperBuilder
 public class Order extends BaseModel{
 	
 	@Column(columnDefinition = "datetime default current_timestamp")

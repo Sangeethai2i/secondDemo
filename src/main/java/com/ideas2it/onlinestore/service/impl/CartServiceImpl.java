@@ -98,7 +98,7 @@ public class CartServiceImpl implements CartService {
 					quantity = quantity + cartProduct.getQuantity();
 					cartProduct.setQuantity(quantity);
 				} else {
-					cartProduct = new CartProduct(quantity, product);
+					//cartProduct = new CartProduct(quantity, product);
 					cartProducts.add(cartProduct);					
 				}
 			}

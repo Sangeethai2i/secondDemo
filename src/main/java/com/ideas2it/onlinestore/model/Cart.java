@@ -22,6 +22,7 @@ import org.hibernate.annotations.Where;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 /**
  * This class represents the model we are implementing 
@@ -37,6 +38,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@SuperBuilder
 @Where(clause = "deleted = '0'")
 public class Cart extends BaseModel {
 	

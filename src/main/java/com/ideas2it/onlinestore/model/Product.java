@@ -13,7 +13,9 @@ import java.util.List;
 import javax.persistence.*;
 
 import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption; 
+import org.hibernate.annotations.LazyCollectionOption;
+
+import lombok.experimental.SuperBuilder; 
 
 /**
  * It is a simple JavaBean domain object representing a product.
@@ -24,6 +26,7 @@ import org.hibernate.annotations.LazyCollectionOption;
  */
 @Entity
 @Table(name = "product")
+@SuperBuilder
 public class Product extends BaseModel {
 	
 	@Transient
@@ -63,7 +66,6 @@ public class Product extends BaseModel {
     @LazyCollection(LazyCollectionOption.FALSE)
 	private List<Wishlist> wishlists;
 	
-	public Product() {}
 
 	public int getQuantity() {
 		return quantity;

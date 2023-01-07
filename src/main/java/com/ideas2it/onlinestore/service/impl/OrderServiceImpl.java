@@ -175,7 +175,7 @@ public class OrderServiceImpl implements OrderService{
 	 * @return
 	 */
 	private Order checkoutCart(User user, List<CartProduct> cartProducts, AddressDTO addressDTO) {
-		Order order = new Order();
+		Order order = null;//new Order();
 		order.setUser(user);
 		order.setAddress(mapper.map(addressDTO, Address.class));
 		order.setAmount(updateCartTotal(cartProducts));
@@ -216,7 +216,7 @@ public class OrderServiceImpl implements OrderService{
 		List<OrderProduct> orderedProducts = new ArrayList<>();
 		
 		for (CartProduct cartProduct : cartProducts) {
-			OrderProduct orderedProduct = new OrderProduct();
+			OrderProduct orderedProduct = null;//new OrderProduct();
 			orderedProduct.setQuantity(cartProduct.getQuantity());
 			orderedProduct.setProduct(cartProduct.getProduct());
 			orderedProducts.add(orderedProduct);
