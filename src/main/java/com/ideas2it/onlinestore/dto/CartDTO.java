@@ -12,7 +12,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 /**
  * 
  * @author Aabid
@@ -20,7 +21,8 @@ import lombok.Data;
  * @since 16-12-2022
  *
  */
-@Data
+@Getter
+@Setter
 public class CartDTO {
 	
 	private long id;

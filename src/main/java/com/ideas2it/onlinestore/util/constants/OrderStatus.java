@@ -17,5 +17,6 @@ public enum OrderStatus {
 	SUCCESSFUL,
 	CANCELLED,
 	SHIPPED,
+	DELIVERED,
 	PENDING;
 }

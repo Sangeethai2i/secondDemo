@@ -16,7 +16,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.ideas2it.onlinestore.util.constants.OrderStatus;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 /**
  * 
  * @author Aabid
@@ -24,7 +25,8 @@ import lombok.Data;
  * @since 16-12-2022
  *
  */
-@Data
+@Getter
+@Setter
 public class OrderDTO {
 	
 	private long id;

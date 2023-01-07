@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -35,6 +34,8 @@ import com.ideas2it.onlinestore.util.configuration.JwtFilter;
 import com.ideas2it.onlinestore.util.constants.Constant;
 import com.ideas2it.onlinestore.util.customException.DataNotFoundException;
 import com.ideas2it.onlinestore.util.customException.InsufficientStockException;
+import com.ideas2it.onlinestore.util.mapper.CartMapper;
+import com.ideas2it.onlinestore.util.mapper.ProductMapper;
 
 
 /**
@@ -54,27 +55,30 @@ public class CartServiceImpl implements CartService {
 	
 	private CartRepository cartRepository;	
 	private ProductService productService;	
-	private StockService stockService;	
+	private StockService stockService;
+	private CartMapper cartMapper;
+	private ProductMapper productMapper;
     private Logger logger = LogManager.getLogger(CartServiceImpl.class);
-	private final ModelMapper mapper = new ModelMapper();
 	
 	@Autowired
 	public CartServiceImpl(CartRepository cartRepository, 
-			ProductService productService,
-			StockService stockService) {
+			ProductService productService, StockService stockService,
+			CartMapper cartMapper, ProductMapper productMapper) {
 		this.cartRepository = cartRepository;
 		this.productService = productService;
 		this.stockService = stockService;
-	}	
+		this.cartMapper = cartMapper;
+		this.productMapper = productMapper;
+	}
 	
 	/** 
 	 * {@inheritDoc}
 	 */
 	@Override
 	public CartDTO createCart(CartDTO cartDTO) {
-		Cart cart = cartRepository.save(mapper.map(cartDTO, Cart.class));
+		Cart cart = cartRepository.save(cartMapper.convertCartDTOToEntity(cartDTO));
 		logger.info(Constant.CART_CREATED);
-		return mapper.map(cart, CartDTO.class);
+		return cartMapper.convertCartEntityToDTO(cart);
 		
 	}
 
@@ -86,7 +90,7 @@ public class CartServiceImpl implements CartService {
 		User user = JwtFilter.threadLocal.get();
 		long productId = cartProductInputDTO.getProductId();
 		int quantity = cartProductInputDTO.getQuantity();
-		Product product = mapper.map(productService.getById(productId), Product.class);
+		Product product = productMapper.convertProductDTOToProduct(productService.getById(productId));
 		
 		if (null != user) {
 			Cart cart = user.getCart();
@@ -162,7 +166,7 @@ public class CartServiceImpl implements CartService {
 		User user = JwtFilter.threadLocal.get();
 		Cart cart = user.getCart();
 		cart.setCartTotal(updateCartTotal(cart.getCartProducts()));
-		CartDTO cartDTO = mapper.map(cart, CartDTO.class);
+		CartDTO cartDTO = cartMapper.convertCartEntityToDTO(cart);
 		logger.info(Constant.CART_FETCHED);
 		return cartDTO;		
 	}
@@ -189,7 +193,8 @@ public class CartServiceImpl implements CartService {
 	
 	/**
 	 * <p>This method takes a cart object and converts it into 
-	 * a cartDTO object.</p>
+	 * a cartDTO object.</p
+	 *
 	 * @param cart(cart object)
 	 * @return CartDTO
 	 */

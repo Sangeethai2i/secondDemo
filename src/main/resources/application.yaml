@@ -1,32 +1,29 @@
-logging:
-    file:
-        name: logs/online-store.log
-    level:
-        root: info
-    logback:
-        rollingpolicy:
-            max-file-size: 2mb
-    pattern:
-        file: '%d{yyyy-MM-dd HH:mm:ss} %p %c{1.} :%L %m%n'
-        
-server:
-    servlet:
-       context-path: /api/v1
-    port: 8181
-    
+
 spring:
-    datasource:
-        driverClassName: com.mysql.cj.jdbc.Driver
-        password: arun0411
-        url: jdbc:mysql://localhost:3306/onlinestore
-        username: root
-    jpa:
-        database-platform: org.hibernate.dialect.MySQL5Dialect
-        format-sql: true
-        hibernate:
-            ddl-auto: update
-        show-sql: true
-    mvc:
-        pathmatch:
-            matching-strategy: ant-path-matcher
+  datasource:
+    password: hamadani
+    url: jdbc:mysql://localhost:3306/online_store?allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+      
+server:
+  servlet:
+    context-path: /api/v1
+
+logging:
+  file:
+    name: E:\mini-project\online-store\logger\log.log
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"
+  level:
+    root: error 
       
