@@ -30,7 +30,6 @@ import com.ideas2it.onlinestore.model.Wishlist;
  * @version - 1.0
  * @since - 2022-12-21
  */
-@Component
 public class UserMapper {
 
     /**
@@ -39,9 +38,9 @@ public class UserMapper {
      * @param userDTO   details of the user.
      * @return User     converted user details.
      */
-    public User convertUserDTOToDAO(UserDTO userDTO) {
+    public static User convertUserDTOToDAO(UserDTO userDTO) {
         System.out.println(userDTO.getFirstName());
-        User user = new User();
+        User user = null;//new User();
 
         user.setId(userDTO.getId());
         user.setFirstName(userDTO.getFirstName());
@@ -59,9 +58,8 @@ public class UserMapper {
      * @param user       details of the user DAO.
      * @return UserDTO   details of the user DTO.
      */
-    public UserDTO convertUserDAOToDTO(User user) {
-        UserDTO userDTO = new UserDTO();
-
+    public static UserDTO convertUserDAOToDTO(User user) {
+        UserDTO userDTO = null;//new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setFirstName(user.getFirstName());
         userDTO.setMiddleName(user.getMiddleName());
@@ -78,7 +76,7 @@ public class UserMapper {
      * @return Address     details of the address DAO.
      */
     public Address convertAddressDTOToDAO(AddressDTO addressDTO) {
-        Address address = new Address();
+        Address address = null;//new Address();
 
         address.setId(addressDTO.getId());
         address.setDoorNumber(addressDTO.getDoorNumber());
@@ -119,7 +117,7 @@ public class UserMapper {
      * @return Role      details of the role DAO.
      */
     public Role convertRoleDTOToDAO(RoleDTO roleDTO) {
-        Role role = new Role();
+        Role role = null;//new Role();
 
         role.setId(roleDTO.getId());
         role.setType(roleDTO.getType());
@@ -172,7 +170,7 @@ public class UserMapper {
      * @return Wishlist      details of the wishlist DTO.
      */
     public Wishlist convertWishlistDTO(WishlistDTO wishlistDTO) {
-        Wishlist wishlist = new Wishlist();
+        Wishlist wishlist = null;//new Wishlist();
 
         wishlist.setId(wishlistDTO.getId());
         wishlist.setName(wishlistDTO.getName());

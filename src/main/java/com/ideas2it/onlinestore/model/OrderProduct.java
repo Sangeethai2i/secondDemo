@@ -38,6 +38,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 @Where(clause = "deleted = '0'")
+@SuperBuilder
 public class OrderProduct extends BaseModel {
 
 	@Column(name = "quantity", columnDefinition = "int NOT NULL")

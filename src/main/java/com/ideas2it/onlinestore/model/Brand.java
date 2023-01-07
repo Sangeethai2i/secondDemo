@@ -11,6 +11,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import lombok.experimental.SuperBuilder;
+
 
 /**
  * It is a simple JavaBean domain object representing a brand.
@@ -21,12 +23,12 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "brand")
+@SuperBuilder
 public class Brand extends BaseModel {
 
 	@Column(name = "name", unique = true)
 	private String name;
 	
-	public Brand() {}
 	
 	public String getName() {
 		return name;

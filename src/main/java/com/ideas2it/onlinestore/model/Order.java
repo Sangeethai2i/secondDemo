@@ -49,6 +49,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Where(clause = "deleted = '0'")
 @Table(name = "`order`")
+@SuperBuilder
 public class Order extends BaseModel{
 	
 	@Column(columnDefinition = "datetime default current_timestamp")

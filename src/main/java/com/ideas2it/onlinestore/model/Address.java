@@ -11,6 +11,7 @@ import javax.persistence.*;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 /**
  * It is a simple JavaBean domain object representing an Address.
@@ -22,6 +23,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@SuperBuilder
 public class Address extends BaseModel{
     @Column(nullable = false)
     private String doorNumber;
