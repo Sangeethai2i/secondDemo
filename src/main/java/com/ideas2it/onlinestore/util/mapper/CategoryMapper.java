@@ -10,8 +10,6 @@ package com.ideas2it.onlinestore.util.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.stereotype.Component;
-
 import com.ideas2it.onlinestore.dto.CategoryDTO;
 import com.ideas2it.onlinestore.model.Category;
 
@@ -21,7 +19,6 @@ import com.ideas2it.onlinestore.model.Category;
  * @author arunkumar
  * @version 1.0
  */
-@Component
 public class CategoryMapper {
 
 	/**
@@ -34,16 +31,24 @@ public class CategoryMapper {
 	 * whenever this method was called.
 	 * </p> 
 	 * 
-	 * @param category
-	 * @return categoryDTO
+	 * @param category     - this represent object of the category
+	 * @return categoryDTO - this represent object of the category DTO
 	 */
-	public CategoryDTO convertEntityToDTO(Category category) {
-		CategoryDTO categoryDTO = new CategoryDTO();
-		categoryDTO.setId(category.getId());
-		categoryDTO.setName(category.getName());
-		categoryDTO.setCategory(category.getCategory());
-		categoryDTO.setSubCategories(category.getSubCategories());
-		return categoryDTO;
+	public static CategoryDTO convertEntityToDTO(Category category) {
+		List<Category> subCategories = category.getSubCategories();
+		
+		if (null != subCategories) {
+		    for (Category subCategory: category.getSubCategories()) {
+		    	subCategory.setCategory(null);
+		    	subCategory.setSubCategories(null);
+		    }
+		}
+		return CategoryDTO.builder()
+				.id(category.getId())
+		        .name(category.getName())
+		        .category(category.getCategory())
+                .subCategories(subCategories)
+	            .build();
 	}
 	
 	/**
@@ -56,16 +61,16 @@ public class CategoryMapper {
 	 * whenever this method was called. 
 	 * </p>
 	 * 
-	 * @param categoryDTO
-	 * @return category
+	 * @param categoryDTO - this represent object of the category DTO
+	 * @return category   - this represent object of the category 
 	 */
-	public Category convertDTOToEntity(CategoryDTO categoryDTO) {
-		Category category = new Category();
-		category.setId(categoryDTO.getId());
-		category.setName(categoryDTO.getName());
-		category.setCategory(categoryDTO.getCategory());
-		category.setSubCategories(categoryDTO.getSubCategories());
-		return category;
+	public static Category convertDTOToEntity(CategoryDTO categoryDTO) {
+		return Category.builder()
+				.id(categoryDTO.getId())
+		        .name(categoryDTO.getName())
+		        .category(categoryDTO.getCategory())
+		        .subCategories(categoryDTO.getSubCategories())
+		        .build();
 	}
 	
 	/**
@@ -78,10 +83,10 @@ public class CategoryMapper {
 	 * whenever this method was called.  
 	 * </p>
 	 * 
-	 * @param categories
-	 * @return categoriesDTO
+	 * @param categories     - this represent list of the category
+	 * @return categoriesDTO - this represent list of the category DTO
 	 */
-	public List<CategoryDTO> convertEntityToDTO(List<Category> categories) {
+	public static List<CategoryDTO> convertEntityToDTO(List<Category> categories) {
         List<CategoryDTO> categoriesDTO = new ArrayList<>();
         for (Category category: categories) {
         	categoriesDTO.add(convertEntityToDTO(category));

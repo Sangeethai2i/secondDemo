@@ -56,19 +56,15 @@ public class CartServiceImpl implements CartService {
 	private CartRepository cartRepository;	
 	private ProductService productService;	
 	private StockService stockService;
-	private CartMapper cartMapper;
-	private ProductMapper productMapper;
     private Logger logger = LogManager.getLogger(CartServiceImpl.class);
 	
 	@Autowired
 	public CartServiceImpl(CartRepository cartRepository, 
-			ProductService productService, StockService stockService,
-			CartMapper cartMapper, ProductMapper productMapper) {
+			ProductService productService, StockService stockService) {
+		
 		this.cartRepository = cartRepository;
 		this.productService = productService;
 		this.stockService = stockService;
-		this.cartMapper = cartMapper;
-		this.productMapper = productMapper;
 	}
 	
 	/** 
@@ -76,9 +72,9 @@ public class CartServiceImpl implements CartService {
 	 */
 	@Override
 	public CartDTO createCart(CartDTO cartDTO) {
-		Cart cart = cartRepository.save(cartMapper.convertCartDTOToEntity(cartDTO));
+		Cart cart = cartRepository.save(CartMapper.convertCartDTOToEntity(cartDTO));
 		logger.info(Constant.CART_CREATED);
-		return cartMapper.convertCartEntityToDTO(cart);
+		return CartMapper.convertCartEntityToDTO(cart);
 		
 	}
 
@@ -90,7 +86,7 @@ public class CartServiceImpl implements CartService {
 		User user = JwtFilter.threadLocal.get();
 		long productId = cartProductInputDTO.getProductId();
 		int quantity = cartProductInputDTO.getQuantity();
-		Product product = productMapper.convertProductDTOToProduct(productService.getById(productId));
+		Product product = ProductMapper.convertProductDTOToProduct(productService.getById(productId));
 		
 		if (null != user) {
 			Cart cart = user.getCart();
@@ -102,7 +98,8 @@ public class CartServiceImpl implements CartService {
 					quantity = quantity + cartProduct.getQuantity();
 					cartProduct.setQuantity(quantity);
 				} else {
-					cartProduct = new CartProduct(quantity, product);
+					cartProduct.setQuantity(quantity);
+					cartProduct.setProduct(product);
 					cartProducts.add(cartProduct);					
 				}
 			}
@@ -166,7 +163,7 @@ public class CartServiceImpl implements CartService {
 		User user = JwtFilter.threadLocal.get();
 		Cart cart = user.getCart();
 		cart.setCartTotal(updateCartTotal(cart.getCartProducts()));
-		CartDTO cartDTO = cartMapper.convertCartEntityToDTO(cart);
+		CartDTO cartDTO = CartMapper.CartDTOBuilder().cart(cart).build();
 		logger.info(Constant.CART_FETCHED);
 		return cartDTO;		
 	}
@@ -199,22 +196,24 @@ public class CartServiceImpl implements CartService {
 	 * @return CartDTO
 	 */
     public CartDTO convertCartEntityToDTO(Cart cart) {
-    	CartDTO cartDTO = new CartDTO();
-    	cartDTO.setId(cart.getId());
     	List<CartProduct> cartProducts = cart.getCartProducts().stream()
     			.filter(cartProduct -> (!cartProduct.isDeleted()))
     			.collect(Collectors.toList());
     	List<CartProductDTO> cartProductDTOs = new ArrayList<>();
-    	cartDTO.setCartTotal(updateCartTotal(cartProducts));
     	
     	for (CartProduct cartProduct : cartProducts) {
-			CartProductDTO cartProductDTO = new CartProductDTO();
-			cartProductDTO.setId(cartProduct.getId());
-			cartProductDTO.setQuantity(cartProduct.getQuantity());
-			cartProductDTO.setProduct(productService.getById(cartProduct.getProduct().getId()));
+			CartProductDTO cartProductDTO = CartProductDTO.builder()
+					.id(cartProduct.getId())
+					.quantity(cartProduct.getQuantity())
+					.product(productService.getById(cartProduct.getProduct().getId()))
+					.build();
 			cartProductDTOs.add(cartProductDTO);
-		}    	
-    	cartDTO.setCartProducts(cartProductDTOs);
+		}
+    	CartDTO cartDTO = CartDTO.builder()
+    			.id(cart.getId())
+    			.cartTotal(updateCartTotal(cartProducts))
+    			.cartProducts(cartProductDTOs)
+    			.build();
     	return cartDTO;
     }
 	

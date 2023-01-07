@@ -1,10 +1,9 @@
 package com.ideas2it.onlinestore.util.mapper;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.ideas2it.onlinestore.dto.CartDTO;
 import com.ideas2it.onlinestore.model.Cart;
+
+import lombok.Builder;
 /**
  * 
  * @author Aabid
@@ -12,44 +11,37 @@ import com.ideas2it.onlinestore.model.Cart;
  * @since 16-12-2022
  *
  */
-@Component
 public class CartMapper {
-
-	private CartProductMapper cartProductMapper;
-	private UserMapper userMapper;
 	
-	@Autowired
-	public CartMapper(CartProductMapper cartProductMapper,
-			UserMapper userMapper) {
-		this.cartProductMapper = cartProductMapper;
-		this.userMapper = userMapper;
-	}
-
 	/**
 	 * 
 	 * @param cart
 	 * @return
 	 */
-	public CartDTO convertCartEntityToDTO(Cart cart) {
+	@Builder(builderMethodName = "CartDTOBuilder")
+	public static CartDTO convertCartEntityToDTO(Cart cart) {
 		CartDTO cartDTO = null;
 		
 		if (null != cart) {
-			cartDTO = new CartDTO();
-			cartDTO.setId(cart.getId());
-			cartDTO.setCartTotal(cart.getCartTotal());
-			cartDTO.setCartProducts(cartProductMapper.convertCartProductsToDTOs(cart.getCartProducts()));
+			cartDTO = CartDTO.builder()
+					.id(cart.getId())
+					.cartTotal(cart.getCartTotal())
+					.cartProducts(CartProductMapper.convertCartProductsToDTOs(cart.getCartProducts()))
+					.build();
 		}
 		 return cartDTO;
 	}
 	
-	public Cart convertCartDTOToEntity(CartDTO cartDTO) {
+	@Builder(builderMethodName = "CartEntityBuilder")
+	public static Cart convertCartDTOToEntity(CartDTO cartDTO) {
 		Cart cart = null;
 		
 		if (null != cartDTO) {
-			cart = new Cart();
-			cart.setId(cartDTO.getId());
-			cart.setUser(userMapper.convertUserDTOToDAO(cartDTO.getUser()));
-			cart.setCartProducts(cartProductMapper.convertCartProductDTOsToCartProducts(cartDTO.getCartProducts()));
+			cart = Cart.builder()
+					.id(cartDTO.getId())
+					.user(UserMapper.convertUserDTOToDAO(cartDTO.getUser()))
+					.cartProducts(CartProductMapper.convertCartProductDTOsToCartProducts(cartDTO.getCartProducts()))
+					.build();
 		}
 		return cart;
 	}

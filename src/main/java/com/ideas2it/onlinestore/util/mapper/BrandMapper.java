@@ -29,7 +29,7 @@ public class BrandMapper {
 	 * @return brand
 	 */
 	public Brand convertBrandDTOToBrand(BrandDTO brandDTO) {
-		Brand brand = new Brand();
+		Brand brand = null;
 		
 		if (null != brandDTO.getId()) {
 		    brand.setId(brandDTO.getId());

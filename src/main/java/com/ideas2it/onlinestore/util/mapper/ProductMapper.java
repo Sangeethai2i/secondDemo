@@ -32,13 +32,13 @@ public class ProductMapper {
 	 * @param productDTO
 	 * @return product
 	 */
-	public Product convertProductDTOToProduct(ProductDTO productDTO) {
-		Product product = new Product();
+	public static Product convertProductDTOToProduct(ProductDTO productDTO) {
+		Product product = null;//new Product();
 		
 		if (0 != productDTO.getId()) {
 		    product.setId(productDTO.getId());
 		}
-		product.setBrand(brandMapper.convertBrandDTOToBrand(productDTO.getBrand()));
+		//product.setBrand(brandMapper.convertBrandDTOToBrand(productDTO.getBrand()));
 		product.setCategory(productDTO.getCategory());
 		product.setSubCategory(productDTO.getSubCategory());
 		product.setDescription(productDTO.getDescription());
@@ -56,10 +56,10 @@ public class ProductMapper {
 	 * @param product
 	 * @return productDTO
 	 */
-	public ProductDTO convertProductToProductDTO(Product product) {
+	public static ProductDTO convertProductToProductDTO(Product product) {
 		ProductDTO productDTO = new ProductDTO();
 		productDTO.setId(product.getId());
-		productDTO.setBrand(brandMapper.convertBrandToBrandDTO(product.getBrand()));
+		//productDTO.setBrand(brandMapper.convertBrandToBrandDTO(product.getBrand()));
 		productDTO.setCategory(product.getCategory());
 		productDTO.setSubCategory(product.getSubCategory());
 		productDTO.setDescription(product.getDescription());
