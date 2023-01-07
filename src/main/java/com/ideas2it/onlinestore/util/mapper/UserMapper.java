@@ -10,13 +10,18 @@ package com.ideas2it.onlinestore.util.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ideas2it.onlinestore.dto.*;
-import com.ideas2it.onlinestore.model.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import com.ideas2it.onlinestore.service.ProductService;
+import com.ideas2it.onlinestore.dto.AddressDTO;
+import com.ideas2it.onlinestore.dto.ProductDTO;
+import com.ideas2it.onlinestore.dto.RoleDTO;
+import com.ideas2it.onlinestore.dto.UserDTO;
+import com.ideas2it.onlinestore.dto.WishlistDTO;
+import com.ideas2it.onlinestore.model.Address;
+import com.ideas2it.onlinestore.model.Product;
+import com.ideas2it.onlinestore.model.Role;
+import com.ideas2it.onlinestore.model.User;
+import com.ideas2it.onlinestore.model.Wishlist;
 
 /**
  * Mapper class of the user.

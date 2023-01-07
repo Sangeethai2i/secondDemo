@@ -11,7 +11,8 @@ import javax.validation.constraints.Min;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 /**
  * 
  * @author Aabid
@@ -19,7 +20,8 @@ import lombok.Data;
  * @since 16-12-2022
  *
  */
-@Data
+@Getter
+@Builder
 public class CartProductDTO {
 	
 	private long id;

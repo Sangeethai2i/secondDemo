@@ -7,7 +7,8 @@
  */
 package com.ideas2it.onlinestore.dto;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 
 /**
  * 
@@ -16,7 +17,8 @@ import lombok.Data;
  * @since 16-12-2022
  *
  */
-@Data
+@Getter
+@Builder
 public class OrderProductDTO  {
 	
 	private long id;

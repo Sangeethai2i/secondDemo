@@ -16,8 +16,6 @@ import com.ideas2it.onlinestore.dto.CartProductDTO;
 import com.ideas2it.onlinestore.dto.ProductDTO;
 import com.ideas2it.onlinestore.dto.StockDTO;
 import com.ideas2it.onlinestore.dto.UserDTO;
-import com.ideas2it.onlinestore.mapper.ProductMapper;
-import com.ideas2it.onlinestore.mapper.UserMapper;
 import com.ideas2it.onlinestore.model.User;
 import com.ideas2it.onlinestore.service.AddressService;
 import com.ideas2it.onlinestore.service.CartService;
@@ -26,6 +24,8 @@ import com.ideas2it.onlinestore.service.ProductService;
 import com.ideas2it.onlinestore.service.StockService;
 import com.ideas2it.onlinestore.service.UserService;
 import com.ideas2it.onlinestore.util.configuration.JwtFilter;
+import com.ideas2it.onlinestore.util.mapper.ProductMapper;
+import com.ideas2it.onlinestore.util.mapper.UserMapper;
 
 @SpringBootTest
 class OnlinestoreApplicationTests {
@@ -76,11 +76,11 @@ class OnlinestoreApplicationTests {
 		CartDTO cart = new CartDTO();
 		CartProductDTO products = new CartProductDTO();
 		products.setQuantity(10);
-		products.setProductDTO(new ProductDTO());
+		products.setProduct(new ProductDTO());
 		List<CartProductDTO> cartProducts = new ArrayList<>();
 		cartProducts.add(products);
-		cart.setUserDTO(userMapper.convertUserDAO(JwtFilter.getThreadLocal().get()));
-		cart.setCartProductDTOs(cartProducts);
+		cart.setUser(userMapper.convertUserDAO(JwtFilter.getThreadLocal().get()));
+		cart.setCartProducts(cartProducts);
 		assertEquals(cart, cartService.createCart(cart));
 	}
 

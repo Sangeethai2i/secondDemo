@@ -99,7 +99,7 @@ public class ProductController {
 	@ApiOperation(value = "Shows products by brand",
             notes = "User can view all the products available in a particular brand",
             response = ProductDTO.class)
-	private ResponseEntity<Object> getByBrand(@ApiParam(name = "ID", value = "id of the brand") @RequestParam("id") Long brandId){
+	private ResponseEntity<Object> getByBrand(@ApiParam(name = "ID", value = "id of the brand") @RequestParam("id") Long brandId) {
 		return new ResponseEntity<>(productService.getBrand(brandId), HttpStatus.OK);
 	}
 
@@ -116,8 +116,7 @@ public class ProductController {
 	@ApiOperation(value = "Shows products by category",
     notes = "User can view all the products available in a particular category",
     response = ProductDTO.class)
-	private ResponseEntity<Object> getByCategory(@ApiParam(name = "ID", value = "id of the category") @RequestParam("id") Long categoryId)
-			 {
+	private ResponseEntity<Object> getByCategory(@ApiParam(name = "ID", value = "id of the category") @RequestParam("id") Long categoryId) {
 		return new ResponseEntity<>(productService.getByCategory(categoryId), HttpStatus.OK);
 	}
 
@@ -134,8 +133,7 @@ public class ProductController {
 	@ApiOperation(value = "Shows products by sub category",
     notes = "User can view all the products available in a particular sub category",
     response = ProductDTO.class)
-	private ResponseEntity<Object> getBySubCategory(@ApiParam(name = "ID", value = "id of the sub category") @RequestParam("id") Long subCategoryId)
-			 {
+	private ResponseEntity<Object> getBySubCategory(@ApiParam(name = "ID", value = "id of the sub category") @RequestParam("id") Long subCategoryId) {
 		return new ResponseEntity<>(productService.getBySubCategory(subCategoryId), HttpStatus.OK);
 	}
 
@@ -205,7 +203,7 @@ public class ProductController {
 	@ApiOperation(value = "Shows all the brands",
     notes = "User can view all the brands",
     response = BrandDTO.class)
-	private ResponseEntity<List<BrandDTO>> viewBrands()  {
+	private ResponseEntity<List<BrandDTO>> viewBrands() {
 		return new ResponseEntity<List<BrandDTO>>(productService.getAllBrands(), HttpStatus.OK);
 	}
 
@@ -224,7 +222,7 @@ public class ProductController {
 		    response = BrandDTO.class)
 	@PutMapping("/brand")
 	private ResponseEntity<BrandDTO> updateBrand(@ApiParam(name = "ID", value = "id of the brand to be updated") @RequestParam("id") Long brandId,
-			@RequestBody BrandDTO brand)  {
+			@RequestBody BrandDTO brand) {		
         brand.setId(brandId);           
 		return new ResponseEntity<BrandDTO>(productService.updateBrand(brand), HttpStatus.OK);
 	}

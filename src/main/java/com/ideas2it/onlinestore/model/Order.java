@@ -28,6 +28,7 @@ import org.hibernate.annotations.Where;
 import com.ideas2it.onlinestore.util.constants.OrderStatus;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 /**
@@ -44,6 +45,8 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@SuperBuilder
 @Where(clause = "deleted = '0'")
 @Table(name = "`order`")
 @SuperBuilder

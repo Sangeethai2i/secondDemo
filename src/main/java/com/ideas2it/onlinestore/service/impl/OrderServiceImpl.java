@@ -14,14 +14,12 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.ideas2it.onlinestore.dto.AddressDTO;
 import com.ideas2it.onlinestore.dto.OrderDTO;
-import com.ideas2it.onlinestore.model.Address;
 import com.ideas2it.onlinestore.model.Cart;
 import com.ideas2it.onlinestore.model.CartProduct;
 import com.ideas2it.onlinestore.model.Order;
@@ -36,6 +34,8 @@ import com.ideas2it.onlinestore.util.configuration.JwtFilter;
 import com.ideas2it.onlinestore.util.constants.Constant;
 import com.ideas2it.onlinestore.util.constants.OrderStatus;
 import com.ideas2it.onlinestore.util.customException.DataNotFoundException;
+import com.ideas2it.onlinestore.util.mapper.OrderMapper;
+import com.ideas2it.onlinestore.util.mapper.UserMapper;
 
 /**
  * 
@@ -48,20 +48,15 @@ import com.ideas2it.onlinestore.util.customException.DataNotFoundException;
 public class OrderServiceImpl implements OrderService{
 	
 	private final StockService stockService;
-	
-	private final AddressService addressService;
-	
-	private final OrderRepository orderRepository;
-	
+	private final AddressService addressService;	
+	private final OrderRepository orderRepository;	
 	private final CartProductService cartProductService;
-	
-	private final ModelMapper mapper = new ModelMapper();
 	
     private Logger logger = LogManager.getLogger(OrderServiceImpl.class);
 	
 	@Autowired
 	public OrderServiceImpl(OrderRepository orderRepository,
-			StockService stockService,AddressService addressService, 
+			StockService stockService, AddressService addressService, 
 			CartProductService cartProductService) {
 		
 		this.orderRepository = orderRepository;
@@ -88,7 +83,7 @@ public class OrderServiceImpl implements OrderService{
 					cartProduct.setDeleted(true);
 					cartProductService.saveCartProduct(cartProduct);
 				}
-				OrderDTO orderDTO = mapper.map(order, OrderDTO.class);
+				OrderDTO orderDTO = OrderMapper.OrderDTOBuilder().order(order).build();
 				logger.info(Constant.ORDER_SUCCESSFUL);
 				return orderDTO;
 			} else {
@@ -110,7 +105,7 @@ public class OrderServiceImpl implements OrderService{
 		Order order = this.orderRepository.findById(orderId)
 				.orElseThrow(()-> new DataNotFoundException("Order not found. ID: " +orderId, HttpStatus.NOT_FOUND));
 		logger.error(Constant.ORDER_FETCHED);
-		return mapper.map(order, OrderDTO.class);
+		return OrderMapper.OrderDTOBuilder().order(order).build();
 	}
 	
 	/**
@@ -121,7 +116,7 @@ public class OrderServiceImpl implements OrderService{
 		User user = JwtFilter.threadLocal.get();
 		List<Order> orders = user.getOrders();		
 		List<OrderDTO> orderDTOs = orders.stream()
-				.map(order -> mapper.map(order, OrderDTO.class))
+				.map(order -> OrderMapper.OrderDTOBuilder().order(order).build())
 				.collect(Collectors.toList());
 		logger.info(Constant.ORDERS_FETCHED);
 		return orderDTOs;
@@ -175,13 +170,14 @@ public class OrderServiceImpl implements OrderService{
 	 * @return
 	 */
 	private Order checkoutCart(User user, List<CartProduct> cartProducts, AddressDTO addressDTO) {
-		Order order = null;//new Order();
-		order.setUser(user);
-		order.setAddress(mapper.map(addressDTO, Address.class));
-		order.setAmount(updateCartTotal(cartProducts));
-		order.setOrderProducts(convertCartProductsToOrderProducts(cartProducts));
-		order.setDate(LocalDate.now());
-		order.setStatus(OrderStatus.SUCCESSFUL);
+		Order order = Order.builder()
+				.user(user)
+				.address(UserMapper.convertAddressDTOToDAO(addressDTO))
+				.amount(updateCartTotal(cartProducts))
+				.orderProducts(convertCartProductsToOrderProducts(cartProducts))
+				.date(LocalDate.now())
+				.status(OrderStatus.SUCCESSFUL)
+				.build();
 		this.orderRepository.save(order);
 		decreaseStocks(convertCartProductsToOrderProducts(cartProducts));
 		return order;
@@ -216,12 +212,12 @@ public class OrderServiceImpl implements OrderService{
 		List<OrderProduct> orderedProducts = new ArrayList<>();
 		
 		for (CartProduct cartProduct : cartProducts) {
-			OrderProduct orderedProduct = null;//new OrderProduct();
-			orderedProduct.setQuantity(cartProduct.getQuantity());
-			orderedProduct.setProduct(cartProduct.getProduct());
+			OrderProduct orderedProduct = OrderProduct.builder()
+					.quantity(cartProduct.getQuantity())
+					.product(cartProduct.getProduct())
+					.build();
 			orderedProducts.add(orderedProduct);
-		}
-		
+		}		
 		return orderedProducts;
 	}
 	
@@ -249,40 +245,6 @@ public class OrderServiceImpl implements OrderService{
 			String productName = orderProduct.getProduct().getName();
 			int quantity = orderProduct.getQuantity();
 			this.stockService.increaseQuantity(productName, quantity);
-		}
-		
-	}
-	
-	
-	/**
-	 * This method takes a list of orders and converts the list 
-	 * into an OrderDTO type list that can be returned to the 
-	 * respective controller.
-	 * 
-	 * @param orders(List of orders)
-	 * @return orderDTO(List of orderDTOs)
-	 */
-	public List<OrderDTO> convertOrdersToOrderDTOs(List<Order> orders) {
-		List<OrderDTO> orderDTOList = new ArrayList<>();
-		
-		for (Order order : orders) {
-			OrderDTO orderDTO = convertOrderEntityToOrderDTO(order);
-			orderDTOList.add(orderDTO);
-		}
-		return orderDTOList;
-	}
-	
-	/**
-	 * 
-	 * @param order
-	 * @return
-	 */
-	public OrderDTO convertOrderEntityToOrderDTO(Order order) {
-		OrderDTO orderDTO = new OrderDTO();
-		orderDTO.setId(order.getId());
-		orderDTO.setDate(order.getDate());
-		orderDTO.setAmount(order.getAmount());
-		orderDTO.setAddress(mapper.map(order.getAddress(), AddressDTO.class));
-		return orderDTO;
+		}		
 	}
 }

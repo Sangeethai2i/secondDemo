@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -35,6 +34,8 @@ import com.ideas2it.onlinestore.util.configuration.JwtFilter;
 import com.ideas2it.onlinestore.util.constants.Constant;
 import com.ideas2it.onlinestore.util.customException.DataNotFoundException;
 import com.ideas2it.onlinestore.util.customException.InsufficientStockException;
+import com.ideas2it.onlinestore.util.mapper.CartMapper;
+import com.ideas2it.onlinestore.util.mapper.ProductMapper;
 
 
 /**
@@ -54,27 +55,26 @@ public class CartServiceImpl implements CartService {
 	
 	private CartRepository cartRepository;	
 	private ProductService productService;	
-	private StockService stockService;	
+	private StockService stockService;
     private Logger logger = LogManager.getLogger(CartServiceImpl.class);
-	private final ModelMapper mapper = new ModelMapper();
 	
 	@Autowired
 	public CartServiceImpl(CartRepository cartRepository, 
-			ProductService productService,
-			StockService stockService) {
+			ProductService productService, StockService stockService) {
+		
 		this.cartRepository = cartRepository;
 		this.productService = productService;
 		this.stockService = stockService;
-	}	
+	}
 	
 	/** 
 	 * {@inheritDoc}
 	 */
 	@Override
 	public CartDTO createCart(CartDTO cartDTO) {
-		Cart cart = cartRepository.save(mapper.map(cartDTO, Cart.class));
+		Cart cart = cartRepository.save(CartMapper.convertCartDTOToEntity(cartDTO));
 		logger.info(Constant.CART_CREATED);
-		return mapper.map(cart, CartDTO.class);
+		return CartMapper.convertCartEntityToDTO(cart);
 		
 	}
 
@@ -86,7 +86,7 @@ public class CartServiceImpl implements CartService {
 		User user = JwtFilter.threadLocal.get();
 		long productId = cartProductInputDTO.getProductId();
 		int quantity = cartProductInputDTO.getQuantity();
-		Product product = mapper.map(productService.getById(productId), Product.class);
+		Product product = ProductMapper.convertProductDTOToProduct(productService.getById(productId));
 		
 		if (null != user) {
 			Cart cart = user.getCart();
@@ -98,7 +98,8 @@ public class CartServiceImpl implements CartService {
 					quantity = quantity + cartProduct.getQuantity();
 					cartProduct.setQuantity(quantity);
 				} else {
-					//cartProduct = new CartProduct(quantity, product);
+					cartProduct.setQuantity(quantity);
+					cartProduct.setProduct(product);
 					cartProducts.add(cartProduct);					
 				}
 			}
@@ -162,7 +163,7 @@ public class CartServiceImpl implements CartService {
 		User user = JwtFilter.threadLocal.get();
 		Cart cart = user.getCart();
 		cart.setCartTotal(updateCartTotal(cart.getCartProducts()));
-		CartDTO cartDTO = mapper.map(cart, CartDTO.class);
+		CartDTO cartDTO = CartMapper.CartDTOBuilder().cart(cart).build();
 		logger.info(Constant.CART_FETCHED);
 		return cartDTO;		
 	}
@@ -189,27 +190,30 @@ public class CartServiceImpl implements CartService {
 	
 	/**
 	 * <p>This method takes a cart object and converts it into 
-	 * a cartDTO object.</p>
+	 * a cartDTO object.</p
+	 *
 	 * @param cart(cart object)
 	 * @return CartDTO
 	 */
     public CartDTO convertCartEntityToDTO(Cart cart) {
-    	CartDTO cartDTO = new CartDTO();
-    	cartDTO.setId(cart.getId());
     	List<CartProduct> cartProducts = cart.getCartProducts().stream()
     			.filter(cartProduct -> (!cartProduct.isDeleted()))
     			.collect(Collectors.toList());
     	List<CartProductDTO> cartProductDTOs = new ArrayList<>();
-    	cartDTO.setCartTotal(updateCartTotal(cartProducts));
     	
     	for (CartProduct cartProduct : cartProducts) {
-			CartProductDTO cartProductDTO = new CartProductDTO();
-			cartProductDTO.setId(cartProduct.getId());
-			cartProductDTO.setQuantity(cartProduct.getQuantity());
-			cartProductDTO.setProduct(productService.getById(cartProduct.getProduct().getId()));
+			CartProductDTO cartProductDTO = CartProductDTO.builder()
+					.id(cartProduct.getId())
+					.quantity(cartProduct.getQuantity())
+					.product(productService.getById(cartProduct.getProduct().getId()))
+					.build();
 			cartProductDTOs.add(cartProductDTO);
-		}    	
-    	cartDTO.setCartProducts(cartProductDTOs);
+		}
+    	CartDTO cartDTO = CartDTO.builder()
+    			.id(cart.getId())
+    			.cartTotal(updateCartTotal(cartProducts))
+    			.cartProducts(cartProductDTOs)
+    			.build();
     	return cartDTO;
     }
 	

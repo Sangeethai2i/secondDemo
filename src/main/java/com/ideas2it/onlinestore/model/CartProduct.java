@@ -18,7 +18,6 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Where;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,6 +37,7 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @SuperBuilder
 @Where(clause = "deleted = '0'")
 public class CartProduct extends BaseModel{
