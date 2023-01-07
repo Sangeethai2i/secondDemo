@@ -21,7 +21,9 @@ import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Where;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 /**
  * This class represents the model we are implementing 
@@ -37,19 +39,19 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@SuperBuilder	
 @Where(clause = "deleted = '0'")
 public class Cart extends BaseModel {
 	
 	@Transient
-	private double cartTotal;
-	
+	private double cartTotal;	
 	@OneToMany(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "cart_id", nullable = false)
 	@LazyCollection(LazyCollectionOption.FALSE)
-	private List<CartProduct> cartProducts;
-	
+	private List<CartProduct> cartProducts;	
 	@OneToOne
 	@JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
 	private User user;
-	
+
 }

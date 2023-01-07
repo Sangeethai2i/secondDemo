@@ -12,8 +12,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 /**
  * 
  * @author Aabid
@@ -22,7 +22,7 @@ import lombok.Setter;
  *
  */
 @Getter
-@Setter
+@Builder
 public class CartDTO {
 	
 	private long id;
@@ -32,8 +32,7 @@ public class CartDTO {
 	private List<CartProductDTO> cartProducts;	
 	
 	@JsonIgnore
-	private UserDTO user;
-
+	private UserDTO user;	
 	
 }
 

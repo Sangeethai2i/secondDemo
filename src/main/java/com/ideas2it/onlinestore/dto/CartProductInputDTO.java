@@ -10,8 +10,8 @@ package com.ideas2it.onlinestore.dto;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This class represents an Input DTO object for
@@ -26,7 +26,7 @@ import lombok.Setter;
  *
  */
 @Getter
-@Setter
+@Builder
 public class CartProductInputDTO {
 	
     @NotBlank(message = "Please provide a product ID")

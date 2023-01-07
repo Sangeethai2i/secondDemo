@@ -18,7 +18,9 @@ import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Where;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 /**
  * This class represents the model we are implementing 
  * for the Order products. In addition to its own fields
@@ -33,6 +35,8 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@SuperBuilder
 @Where(clause = "deleted = '0'")
 public class OrderProduct extends BaseModel {
 
